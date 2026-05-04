@@ -14,6 +14,8 @@ file(GLOB_RECURSE ALL_FILES
 add_executable(CustroEngine
         ${ALL_FILES}
         libs/glad/src/glad.c
+        CustroEngine/src/Test.cpp
+        CustroEngine/src/types.hpp
 )
 
 target_link_libraries(CustroEngine

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(CustroEngine)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 include_directories(libs/glfw/include)
 include_directories(libs/glad/include)
@@ -14,8 +14,6 @@ file(GLOB_RECURSE ALL_FILES
 add_executable(CustroEngine
         ${ALL_FILES}
         libs/glad/src/glad.c
-        CustroEngine/src/Test.cpp
-        CustroEngine/src/types.hpp
 )
 
 target_link_libraries(CustroEngine
@@ -25,3 +23,5 @@ target_link_libraries(CustroEngine
 )
 
 target_include_directories(CustroEngine PRIVATE libs)
+
+message(STATUS "Source dir: ${CMAKE_SOURCE_DIR}")

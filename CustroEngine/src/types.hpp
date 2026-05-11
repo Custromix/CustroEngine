@@ -1,6 +1,6 @@
 #pragma once
 
-namespace CustroEngine
+namespace Engine
 {
     typedef signed char        int8;
     typedef short              int16;

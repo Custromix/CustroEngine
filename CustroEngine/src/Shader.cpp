@@ -39,6 +39,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     char infoLog[512];
     
     vertexShaderID = glCreateShader(GL_VERTEX_SHADER); //Créer un shader vide de type GL_VERTEX_SHADER
+    
+    std::cout << "zfzfzffz" << std::endl;
+    
     glShaderSource(vertexShaderID, 1, &vShaderCode, nullptr); //Assign le shader GLSL au vertexShader
     glCompileShader(vertexShaderID); //Compile le vertex shader
     

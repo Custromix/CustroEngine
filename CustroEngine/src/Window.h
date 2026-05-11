@@ -2,7 +2,7 @@
 #include "types.hpp"
 #include <GLFW/glfw3.h>
 
-using namespace CustroEngine; 
+using namespace Engine; 
 
 class Window
 {

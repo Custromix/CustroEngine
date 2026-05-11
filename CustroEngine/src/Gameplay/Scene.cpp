@@ -13,5 +13,4 @@ Scene::~Scene()
         delete GameObjects[i];
         GameObjects[i] = nullptr;
     }
-        
 }

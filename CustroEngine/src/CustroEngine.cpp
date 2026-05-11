@@ -5,15 +5,18 @@
 
 CustroEngine::CustroEngine()
 {
-    GameObject::SetEngine(this);
+    //GameObject::SetEngine(this);
 }
 
 CustroEngine::~CustroEngine()
 {
-    delete currentScene;
     delete shader;
+    delete currentScene;
+    
     glfwDestroyWindow(window);
     glfwTerminate();
+    
+    GameObject::CustroEngineInstance = nullptr;
 }
 
 void CustroEngine::Init()
@@ -47,8 +50,6 @@ void CustroEngine::Init()
     glEnable(GL_DEPTH_TEST);
     
     shader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
-    
-
 }
 
 void CustroEngine::Lunch()
@@ -94,8 +95,7 @@ Mesh* CustroEngine::GetMesh(const char* MeshName)
 
 void CustroEngine::PreStart()
 {
-
-
+    
 }
 
 void CustroEngine::Start()
@@ -133,7 +133,7 @@ void CustroEngine::Update()
         else
             CountFPS++;
         
-        std::cout << " FPS : " + std::to_string(FPS) << std::endl;
+        //std::cout << " FPS : " + std::to_string(FPS) << std::endl;
         
         for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
         {
@@ -157,6 +157,7 @@ void CustroEngine::Update()
         glfwPollEvents();
     }
     
+    glfwDestroyWindow(window);
     glfwTerminate();
 }
 

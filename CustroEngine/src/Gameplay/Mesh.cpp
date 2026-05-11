@@ -19,7 +19,7 @@ Mesh::Mesh(float vertices[], const char* NewMeshName)
 
 Mesh::~Mesh()
 {
-    AllMeshes.erase(AllMeshes.begin() + AllMeshesIndex);
+    AllMeshes.erase(std::remove(AllMeshes.begin(), AllMeshes.end(), this), AllMeshes.end());
 }
 
 void Mesh::ImportMesh(float vertices[])

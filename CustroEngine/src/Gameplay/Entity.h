@@ -38,5 +38,7 @@ public:
 private:
     Transform transform;
     
+    
+    std::vector<Component*> Components;
     std::vector<EntityComponent*> EntityComponents;
 };

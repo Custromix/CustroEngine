@@ -24,7 +24,9 @@ public:
     //TODO: Supprimer cette fonction quand on aura fait le parser
     Mesh* ImportMesh(float* vertices, const char* MeshName);
     
-    Mesh* GetMesh(const char* MeshName);
+    Mesh* GetMesh(const String MeshName);
+    
+    Scene* CreateScene();
     
 private:
     void PreStart();
@@ -38,7 +40,9 @@ private:
     
     Shader* shader = nullptr;
     
-    std::vector<Mesh> Meshes;
+    std::vector<Mesh> GarbagedMeshes;
+    
+    std::vector<Scene*> GarbagedScene;
 
 private:
     const unsigned int WINDOW_WIDTH = 800;

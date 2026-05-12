@@ -11,7 +11,14 @@ CustroEngine::CustroEngine()
 CustroEngine::~CustroEngine()
 {
     delete shader;
-    delete currentScene;
+    
+    for (int i = 0; i < GarbagedScene.size(); ++i)
+    {
+        delete GarbagedScene[i];
+        GarbagedScene[i] = nullptr;
+    }
+    
+    currentScene = nullptr;
     
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -73,8 +80,8 @@ Mesh* CustroEngine::ImportMesh(char path, const char* MeshName)
          0.0f,  0.5f, 0.0f
     };
     
-    Meshes.push_back(Mesh(vertices, MeshName));
-    return &Meshes.back();
+    GarbagedMeshes.push_back(Mesh(vertices, MeshName));
+    return &GarbagedMeshes.back();
 }
 
 //TODO: Supprimer cette fonction quand on aura fait le parser
@@ -82,15 +89,21 @@ Mesh* CustroEngine::ImportMesh(float vertices[], const char* MeshName)
 {
     std::cout << "CustroEngine::ImportMesh 2" << std::endl;
 
-    Meshes.push_back(Mesh(vertices, MeshName));
+    GarbagedMeshes.push_back(Mesh(vertices, MeshName));
     std::cout << "CustroEngine::ImportMesh" << std::endl;
-    return &Meshes.back();
+    return &GarbagedMeshes.back();
 }
 
-Mesh* CustroEngine::GetMesh(const char* MeshName)
+Mesh* CustroEngine::GetMesh(const String MeshName)
 {
     //Mesh::GetMesh();
     return nullptr;
+}
+
+Scene* CustroEngine::CreateScene()
+{
+    GarbagedScene.push_back(new Scene());
+    return GarbagedScene.back();
 }
 
 void CustroEngine::PreStart()
@@ -100,6 +113,9 @@ void CustroEngine::PreStart()
 
 void CustroEngine::Start()
 {
+    if (!currentScene)
+        return;
+    
     for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
     {
         currentScene->GetGameObjects()[i]->Start();
@@ -108,6 +124,12 @@ void CustroEngine::Start()
 
 void CustroEngine::Update()
 {
+    if (!currentScene)
+        return;
+    
+    if (!window)
+        return;
+    
     float lastTime = glfwGetTime();
     float seconds = 0.f;
     int CountFPS = 0;

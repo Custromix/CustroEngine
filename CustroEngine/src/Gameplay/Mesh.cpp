@@ -3,23 +3,28 @@
 #include <iostream>
 #include <glad/glad.h>
 
-std::vector<Mesh*> Mesh::AllMeshes;
-std::map<const char*, Mesh*> Mesh::AllMeshesMap;
+std::map<const String, Mesh*> Mesh::AllMeshesMap;
 
-Mesh::Mesh(float vertices[], const char* NewMeshName)
+Mesh::Mesh(float vertices[], const String NewMeshName)
 {
 
     ImportMesh(vertices);
     MeshName = NewMeshName;
-    AllMeshes.push_back(this);
-    AllMeshesIndex = AllMeshes.size()-1;
     
-    AllMeshesMap["MeshName"] = this;
+    AllMeshesMap[MeshName] = this;
 }
 
 Mesh::~Mesh()
 {
-    AllMeshes.erase(std::remove(AllMeshes.begin(), AllMeshes.end(), this), AllMeshes.end());
+    AllMeshesMap.erase(MeshName);
+}
+
+Mesh* Mesh::GetMeshByName(const String MeshName)
+{
+    auto it = AllMeshesMap.find(MeshName);
+    if (it != AllMeshesMap.end())
+        return it->second;
+    return nullptr;
 }
 
 void Mesh::ImportMesh(float vertices[])

@@ -6,4 +6,5 @@ MeshComponent::MeshComponent()
 
 MeshComponent::~MeshComponent()
 {
+    delete usableMesh;
 }

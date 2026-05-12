@@ -1,9 +1,8 @@
 #pragma once
 #include <map>
-#include <vector>
-
 #include "types.hpp"
 #include "Components/Transform.h"
+#include "utils/String.h"
 
 using namespace Engine;
 
@@ -11,12 +10,12 @@ class Mesh
 {
     
 public:
-    Mesh(float vertices[], const char NewMeshName[255]);
+    Mesh(float vertices[], const String NewMeshName);
     ~Mesh();
     
-    const char* GetMeshName() const { return MeshName; }
+    String GetMeshName() const { return MeshName; }
     
-    static Mesh* GetMeshByName(const char* MeshName) { return AllMeshesMap[MeshName]; }
+    static Mesh* GetMeshByName(const String MeshName);
     
 private:
     void ImportMesh(float vertices[]);
@@ -29,11 +28,10 @@ private:
     
     unsigned int EBO;
     
-    const char* MeshName;
+    String MeshName;
     
     uint32 AllMeshesIndex;
     
     
-    static std::vector<Mesh*> AllMeshes;
-    static std::map<const char*, Mesh*> AllMeshesMap;
+    static std::map<const String, Mesh*> AllMeshesMap;
 };

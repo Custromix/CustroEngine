@@ -67,13 +67,10 @@ public:
     
     ~ObjectQuelconque() override
     {
-        //delete MeshComp;
-        //delete BasicSystem;
     }
     
     void Start() override
     {
-        //std::cout << "Position = " + std::to_string(GetTransform()->GetPosition().x)  << std::endl;
         MeshComp->SetMesh(Mesh::GetMeshByName("triangle"));
     }
     
@@ -85,7 +82,7 @@ public:
 };
 
 int main() {
-    //_CrtSetBreakAlloc(493); // le numéro de la fuite
+    
 
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,
@@ -95,6 +92,7 @@ int main() {
     
     
     
+    //_CrtSetBreakAlloc(658); // le numéro de la fuite
     
     
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -103,13 +101,13 @@ int main() {
     
     Engine->Init();
     
-    Scene MyScene = Scene();
+    Scene* MyScene = Engine->CreateScene();
     
-    Engine->SetCurrentScene(&MyScene);
+    Engine->SetCurrentScene(MyScene);
     
-    GameManager* MyGameManager = MyScene.Spawn<class GameManager>();
+    GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
-    ObjectQuelconque* Cube = MyScene.Spawn<class ObjectQuelconque>(glm::vec3(9.f, 0.0f, 0.0f));
+    ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(9.f, 0.0f, 0.0f));
     
     Engine->ImportMesh(vertices, "Triangle");
     
@@ -124,7 +122,6 @@ int main() {
     _CrtDumpMemoryLeaks();
     
 
-    
     
     
     return 0;

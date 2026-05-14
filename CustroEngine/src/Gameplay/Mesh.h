@@ -17,12 +17,14 @@ public:
     
     static Mesh* GetMeshByName(const String MeshName);
     
+    void Render();
+    
 private:
     void ImportMesh(float vertices[]);
     
 private:
     
-    unsigned int VAO;
+    unsigned int VAO = 0;
     
     unsigned int VBO;
     

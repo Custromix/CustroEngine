@@ -13,15 +13,12 @@
 
 
 
-class BasicSystem : public EntityComponent
+class BasicSystem : public Component
 {
     
 public:
     BasicSystem(){}
     ~BasicSystem() override {}
-    
-    void Start() override {}
-    void Update(float deltaTime) override {}
     
 };
 
@@ -71,7 +68,15 @@ public:
     
     void Start() override
     {
-        MeshComp->SetMesh(Mesh::GetMeshByName("triangle"));
+        MeshComp->SetMesh(Mesh::GetMeshByName("Triangle"));
+        //std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
+        /*
+        if (MeshComp->GetMesh()->GetMeshName())
+            std::cout << "MESH TROUVE" << std::endl;
+        else
+        {
+            std::cout << "MESH NOT TROUVE" << std::endl;
+        }*/
     }
     
     void Update(float deltaTime) override
@@ -87,8 +92,8 @@ int main() {
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
+         0.0f,  1.0f, 0.0f
+    };  
     
     
     
@@ -98,18 +103,19 @@ int main() {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     
     CustroEngine* Engine = new CustroEngine();
+    //Engine->Init();
     
-    Engine->Init();
+    Engine->ImportMesh(vertices, "Triangle");
     
     Scene* MyScene = Engine->CreateScene();
     
     Engine->SetCurrentScene(MyScene);
     
-    GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
+    //GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
     ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(9.f, 0.0f, 0.0f));
     
-    Engine->ImportMesh(vertices, "Triangle");
+    
     
     
     // Code du jeu

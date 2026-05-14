@@ -3,6 +3,7 @@
 #include <concepts>
 
 #include "GameObject.h"
+#include "Components/MeshComponent.h"
 
 template <typename T>
 concept SpawnableType = std::is_base_of_v<GameObject, T>;
@@ -12,6 +13,8 @@ class Scene
 
 private:
     std::vector<GameObject*> GameObjects;
+    
+    std::vector<MeshComponent*> MeshComponents;
 
 public:
     Scene();
@@ -28,6 +31,8 @@ public:
     }
     
     std::vector<GameObject*> GetGameObjects() { return GameObjects; }
+    
+    std::vector<MeshComponent*> GetMeshComponents() { return MeshComponents; }
 
 private:
 

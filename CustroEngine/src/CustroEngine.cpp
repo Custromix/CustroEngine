@@ -1,33 +1,13 @@
 #include "CustroEngine.h"
 
+#include "Render/Renderer.h"
 #include "utils/Utils.h"
 
 
 CustroEngine::CustroEngine()
 {
     //GameObject::SetEngine(this);
-}
-
-CustroEngine::~CustroEngine()
-{
-    delete shader;
     
-    for (int i = 0; i < GarbagedScene.size(); ++i)
-    {
-        delete GarbagedScene[i];
-        GarbagedScene[i] = nullptr;
-    }
-    
-    currentScene = nullptr;
-    
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    
-    GameObject::CustroEngineInstance = nullptr;
-}
-
-void CustroEngine::Init()
-{
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -41,8 +21,6 @@ void CustroEngine::Init()
     }
     
     glfwMakeContextCurrent(window);
-    
-    std::cout << "CACA PROUT" << std::endl;
     
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -59,6 +37,37 @@ void CustroEngine::Init()
     shader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
 }
 
+CustroEngine::~CustroEngine()
+{
+    delete shader;
+    
+    for (int i = 0; i < GarbagedScene.size(); ++i)
+    {
+        delete GarbagedScene[i];
+        GarbagedScene[i] = nullptr;
+    }
+    
+    
+    for (int i = 0; i < GarbagedMeshes.size(); ++i)
+    {
+        delete GarbagedMeshes[i];
+        GarbagedMeshes[i] = nullptr;
+    }
+    
+    
+    currentScene = nullptr;
+    
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    
+    GameObject::CustroEngineInstance = nullptr;
+}
+
+void CustroEngine::Init()
+{
+    
+}
+
 void CustroEngine::Lunch()
 {
     PreStart();
@@ -71,7 +80,7 @@ void CustroEngine::SetCurrentScene(Scene* Scene)
     currentScene = Scene;
 }
 
-Mesh* CustroEngine::ImportMesh(char path, const char* MeshName)
+/*Mesh* CustroEngine::ImportMesh(char path, const char* MeshName)
 {
 
     float vertices[] = {
@@ -80,18 +89,15 @@ Mesh* CustroEngine::ImportMesh(char path, const char* MeshName)
          0.0f,  0.5f, 0.0f
     };
     
-    GarbagedMeshes.push_back(Mesh(vertices, MeshName));
-    return &GarbagedMeshes.back();
-}
+    GarbagedMeshes.push_back(new Mesh(vertices, MeshName));
+    return GarbagedMeshes.back();
+}*/
 
 //TODO: Supprimer cette fonction quand on aura fait le parser
 Mesh* CustroEngine::ImportMesh(float vertices[], const char* MeshName)
 {
-    std::cout << "CustroEngine::ImportMesh 2" << std::endl;
-
-    GarbagedMeshes.push_back(Mesh(vertices, MeshName));
-    std::cout << "CustroEngine::ImportMesh" << std::endl;
-    return &GarbagedMeshes.back();
+    GarbagedMeshes.push_back(new Mesh(vertices, MeshName));
+    return GarbagedMeshes.back();
 }
 
 Mesh* CustroEngine::GetMesh(const String MeshName)
@@ -118,7 +124,7 @@ void CustroEngine::Start()
     
     for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
     {
-        currentScene->GetGameObjects()[i]->Start();
+        currentScene->GetGameObjects()[i]->StartEngineClass();
     }
 }
 
@@ -162,8 +168,6 @@ void CustroEngine::Update()
             currentScene->GetGameObjects()[i]->Update(deltaTime);
         }
         
-        
-        
         /***  RENDER  ***/
         
         glClearColor(Utils::NormalizeRGB(78.f), Utils::NormalizeRGB(159.f), Utils::NormalizeRGB(229.f), 1.f);
@@ -171,9 +175,13 @@ void CustroEngine::Update()
         
         
         shader->use();
-        glBindVertexArray(0);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
         
+        Renderer::Draw();
+        
+        /*for (int i = 0; i < currentScene->GetMeshComponents().size(); ++i)
+        {
+            currentScene->GetMeshComponents()[i]->GetMesh()->Render();
+        }*/
         
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -2,9 +2,11 @@
 #include <vector>
 
 #include "Component.h"
+#include "Gameplay/Entity.h"
 #include "Gameplay/Mesh.h"
 
-class MeshComponent : public Component
+
+class MeshComponent : public EntityComponent
 {
 public:
     MeshComponent();
@@ -18,5 +20,7 @@ private:
     Mesh* usableMesh = nullptr;
     
     Transform* EntityTransform;
+    
+    Entity* Owner;
     
 };

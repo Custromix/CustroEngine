@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Gameplay/Mesh.h"
 #include "Gameplay/Scene.h"
+#include "Gameplay/Components/MeshComponent.h"
 
 
 class CustroEngine
@@ -20,7 +21,7 @@ public:
     
     void SetCurrentScene(Scene* Scene);
     
-    Mesh* ImportMesh(char path, const char* MeshName);
+    //Mesh* ImportMesh(char path, const char* MeshName);
     //TODO: Supprimer cette fonction quand on aura fait le parser
     Mesh* ImportMesh(float* vertices, const char* MeshName);
     
@@ -40,7 +41,7 @@ private:
     
     Shader* shader = nullptr;
     
-    std::vector<Mesh> GarbagedMeshes;
+    std::vector<Mesh*> GarbagedMeshes;
     
     std::vector<Scene*> GarbagedScene;
 

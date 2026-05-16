@@ -23,6 +23,8 @@ public:
     
     virtual void Update(float deltaTime) = 0;
     
+    String GetName() const { return Name; }
+    
 protected:
     virtual void Construct();
     

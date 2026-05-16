@@ -20,6 +20,7 @@ protected:
     T* AddComponent()
     {
         T* comp = new T();
+        comp->SetOwner(this);
         
         if constexpr (std::is_base_of<EntityComponent, T>::value)
             EntityComponents.push_back(comp);

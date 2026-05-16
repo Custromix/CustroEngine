@@ -119,7 +119,9 @@ int main() {
     
     //GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
-    ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(9.f, 0.0f, 0.0f));
+    ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(0.0f, 0.0f, 0.0f));
+    
+    Cube->GetTransform()->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     
     
     // Code du jeu

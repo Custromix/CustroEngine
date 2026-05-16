@@ -12,5 +12,5 @@ MeshComponent::~MeshComponent()
     Renderer::UnSubscribe(this);
     
     usableMesh = nullptr;
-    Owner = nullptr;
+    _Owner = nullptr;
 }

@@ -34,7 +34,7 @@ CustroEngine::CustroEngine()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     //glEnable(GL_DEPTH_TEST);
     
-    shader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
+    shader = new Shader("D:/Professional/Other/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Professional/Other/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
 }
 
 CustroEngine::~CustroEngine()
@@ -168,10 +168,9 @@ void CustroEngine::Update()
         glClearColor(Utils::NormalizeRGB(78.f), Utils::NormalizeRGB(159.f), Utils::NormalizeRGB(229.f), 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        
         shader->use();
         
-        Renderer::Draw();
+        Renderer::Draw(shader);
         
         /*for (int i = 0; i < currentScene->GetMeshComponents().size(); ++i)
         {

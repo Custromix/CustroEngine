@@ -1,10 +1,10 @@
 #version 330 core
 
-layout (location = 0) in vec3 meshInitialPos;
+layout (location = 0) in vec3 InitialPos;
 
-uniform mat4 Transform;
-
+uniform mat4 model;
+//meshInitialPos
 void main()
 {
-   gl_Position = Transform * vec4(meshInitialPos, 1.0f);
+   gl_Position = model * vec4(InitialPos, 1.0f);
 }

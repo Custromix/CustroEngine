@@ -15,12 +15,8 @@ public:
     void SetMesh(Mesh* importedMesh) { usableMesh = importedMesh; }
     
     Mesh* GetMesh() const { return usableMesh; }
-    
+
 private:
     Mesh* usableMesh = nullptr;
-    
-    Transform* EntityTransform;
-    
-    Entity* Owner;
     
 };

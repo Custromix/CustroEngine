@@ -23,7 +23,7 @@ public:
     
     //Mesh* ImportMesh(char path, const char* MeshName);
     //TODO: Supprimer cette fonction quand on aura fait le parser
-    Mesh* ImportMesh(float* vertices, const char* MeshName);
+    Mesh* ImportMesh(float* vertices, size_t verticesSize, uint32 indices[], size_t indicesSize, const char* MeshName);
     
     Mesh* GetMesh(const String MeshName);
     

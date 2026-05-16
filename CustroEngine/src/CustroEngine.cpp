@@ -32,7 +32,7 @@ CustroEngine::CustroEngine()
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //Désactive le cursor
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     
     shader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
 }
@@ -83,20 +83,15 @@ void CustroEngine::SetCurrentScene(Scene* Scene)
 /*Mesh* CustroEngine::ImportMesh(char path, const char* MeshName)
 {
 
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
     
     GarbagedMeshes.push_back(new Mesh(vertices, MeshName));
     return GarbagedMeshes.back();
 }*/
 
 //TODO: Supprimer cette fonction quand on aura fait le parser
-Mesh* CustroEngine::ImportMesh(float vertices[], const char* MeshName)
+Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, uint32 indices[], size_t indicesSize, const char* MeshName)
 {
-    GarbagedMeshes.push_back(new Mesh(vertices, MeshName));
+    GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, indices, indicesSize, MeshName));
     return GarbagedMeshes.back();
 }
 

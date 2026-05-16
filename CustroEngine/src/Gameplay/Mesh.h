@@ -10,7 +10,7 @@ class Mesh
 {
     
 public:
-    Mesh(float vertices[], const String NewMeshName);
+    Mesh(float vertices[], size_t verticesSize, uint32 indices[], size_t indicesSize, const String NewMeshName);
     ~Mesh();
     
     String GetMeshName() const { return MeshName; }
@@ -20,7 +20,7 @@ public:
     void Render();
     
 private:
-    void ImportMesh(float vertices[]);
+    void ImportMesh(float vertices[], size_t verticesSize, uint32 indices[], size_t indicesSize);
     
 private:
     
@@ -34,6 +34,7 @@ private:
     
     uint32 AllMeshesIndex;
     
+    uint32 verticesCount;
     
     static std::map<const String, Mesh*> AllMeshesMap;
 };

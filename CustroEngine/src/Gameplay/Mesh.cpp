@@ -5,12 +5,13 @@
 
 std::map<const String, Mesh*> Mesh::AllMeshesMap;
 
-Mesh::Mesh(float vertices[], const String NewMeshName)
+Mesh::Mesh(float vertices[], size_t verticesSize, uint32 indices[], size_t indicesSize, const String NewMeshName)
 {
-
-    ImportMesh(vertices);
+    ImportMesh(vertices, verticesSize, indices, indicesSize);
     MeshName = NewMeshName;
+    verticesCount = indicesSize/sizeof(uint32);
     
+    std::cout << "verticesCount: " << verticesCount << std::endl;
     AllMeshesMap[MeshName] = this;
 }
 
@@ -30,30 +31,34 @@ Mesh* Mesh::GetMeshByName(const String MeshName)
 void Mesh::Render()
 {
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, verticesCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
-void Mesh::ImportMesh(float vertices[])
+void Mesh::ImportMesh(float vertices[], size_t verticesSize, uint32 indices[], size_t indicesSize)
 {
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
     
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &EBO);
     glGenBuffers(1, &VBO);
     
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices)*3, vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    
-    if (VAO == 0 || VBO == 0)
+    if (VAO == 0 || VBO == 0 || EBO == 0)
     {
-        std::cerr << "Erreur : VAO ou VBO non généré" << std::endl;
+        std::cerr << "Erreur : VAO, VBO ou EBO non générés" << std::endl;
     }
     
-    glEnableVertexAttribArray(0);
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     
+    glEnableVertexAttribArray(0); // Active layout 0
+    
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
 }

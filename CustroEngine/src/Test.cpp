@@ -90,9 +90,15 @@ int main() {
     
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  1.0f, 0.0f
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+       -0.5f, -0.5f, 0.0f,  // bottom left
+       -0.5f,  0.5f, 0.0f   // top left 
+    };
+    
+    uint32 indices[] = {  // note that we start from 0!
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
     };  
     
     
@@ -105,7 +111,7 @@ int main() {
     CustroEngine* Engine = new CustroEngine();
     //Engine->Init();
     
-    Engine->ImportMesh(vertices, "Triangle");
+    Engine->ImportMesh(vertices, sizeof(vertices), indices, sizeof(indices), "Triangle");
     
     Scene* MyScene = Engine->CreateScene();
     
@@ -114,8 +120,6 @@ int main() {
     //GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
     ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(9.f, 0.0f, 0.0f));
-    
-    
     
     
     // Code du jeu

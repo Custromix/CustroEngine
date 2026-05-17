@@ -4,12 +4,12 @@
 
 MeshComponent::MeshComponent()
 {
-    Renderer::Subscribe(this);
+    Renderer::Get().Subscribe(this);
 }
 
 MeshComponent::~MeshComponent()
 {
-    Renderer::UnSubscribe(this);
+    Renderer::Get().UnSubscribe(this);
     
     usableMesh = nullptr;
     _Owner = nullptr;

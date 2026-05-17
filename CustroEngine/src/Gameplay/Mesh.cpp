@@ -40,7 +40,8 @@ void Mesh::ImportMesh(float vertices[], size_t verticesSize, uint32 indices[], s
     
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &EBO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &VBO_VERT);
+    glGenBuffers(1, &VBO_UV);
     
     if (VAO == 0 || VBO == 0 || EBO == 0)
     {
@@ -49,16 +50,26 @@ void Mesh::ImportMesh(float vertices[], size_t verticesSize, uint32 indices[], s
     
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    
-    glEnableVertexAttribArray(0); // Active layout 0
-    
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
     
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    //vertices
+    glEnableVertexAttribArray(0); // Active layout 0
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_VERT);
+    glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    
+    //UV
+    glEnableVertexAttribArray(1); // Active layout 1
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_UV);
+    glBufferData(GL_ARRAY_BUFFER, uvSize, uv, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    
     
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    
+    
+    
+  
 }

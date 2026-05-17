@@ -3,6 +3,10 @@
 #include "Render/Renderer.h"
 #include "utils/Utils.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "Render/Texture.h"
+#include "utils/stb_image.h"
+
 
 CustroEngine::CustroEngine()
 {
@@ -34,7 +38,8 @@ CustroEngine::CustroEngine()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     //glEnable(GL_DEPTH_TEST);
     
-    shader = new Shader("D:/Professional/Other/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Professional/Other/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
+    shader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
+    Renderer::Get().Init(shader);
 }
 
 CustroEngine::~CustroEngine()
@@ -93,6 +98,12 @@ Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, uint32 ind
 {
     GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, indices, indicesSize, MeshName));
     return GarbagedMeshes.back();
+}
+
+Texture* CustroEngine::ImportTexture(String TexturePath)
+{
+    GarbagedTexture.push_back(new Texture(TexturePath));
+    return GarbagedTexture.back();
 }
 
 Mesh* CustroEngine::GetMesh(const String MeshName)
@@ -170,7 +181,7 @@ void CustroEngine::Update()
         
         shader->use();
         
-        Renderer::Draw(shader);
+        Renderer::Get().Draw();
         
         /*for (int i = 0; i < currentScene->GetMeshComponents().size(); ++i)
         {

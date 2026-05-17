@@ -6,12 +6,27 @@ class Renderer
 {
 public:
     
-    static void Subscribe(MeshComponent* component);
-    static void UnSubscribe(MeshComponent* component);
+    static Renderer& Get()
+    {
+        static Renderer instance;
+        return instance;
+    }
     
-    static void Draw(Shader* shader);
+    void Init(Shader* shader);
     
+    void Subscribe(MeshComponent* component);
+    void UnSubscribe(MeshComponent* component);
+    
+    void Draw();
+    
+    // Supprimer la copie
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
     
 private:
-    static std::vector<MeshComponent*> MeshComponents;
+    Renderer() {}
+    
+    std::vector<MeshComponent*> MeshComponents;
+    
+    Shader* RenderShader = nullptr;
 };

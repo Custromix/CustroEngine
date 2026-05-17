@@ -1,2 +1,11 @@
 .idea/
+.vs/
+out/
+x64/
 CMakeLists.txt.DotSettings.user
+CustroEngine/OpenGL_Engine.vcxproj
+CustroEngine/OpenGL_Engine.vcxproj.filters
+CustroEngine/OpenGL_Engine.vcxproj.user
+CustroEngine/src/assets
+CustroEngine.sln
+CustroEngine/src/Test.cpp

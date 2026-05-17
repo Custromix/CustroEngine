@@ -5,6 +5,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "Render/Texture.h"
+#include "Render/Vertex.h"
 #include "utils/stb_image.h"
 
 
@@ -38,8 +39,10 @@ CustroEngine::CustroEngine()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     //glEnable(GL_DEPTH_TEST);
     
-    shader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Pro/Others/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
+    shader = new Shader("D:/Professional/Other/CustroEngine/CustroEngine/src/Shader/vertexShader.glsl", "D:/Professional/Other/CustroEngine/CustroEngine/src/Shader/fragmentShader.glsl");
     Renderer::Get().Init(shader);
+    
+    std::cout << "\033[33m" << "CustroEngine::INITIALIZED" << "\033[0m" << std::endl;
 }
 
 CustroEngine::~CustroEngine()
@@ -68,11 +71,6 @@ CustroEngine::~CustroEngine()
     GameObject::CustroEngineInstance = nullptr;
 }
 
-void CustroEngine::Init()
-{
-    
-}
-
 void CustroEngine::Lunch()
 {
     PreStart();
@@ -94,9 +92,9 @@ void CustroEngine::SetCurrentScene(Scene* Scene)
 }*/
 
 //TODO: Supprimer cette fonction quand on aura fait le parser
-Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, uint32 indices[], size_t indicesSize, const char* MeshName)
+Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 faces[], size_t facesSize, const char* MeshName)
 {
-    GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, indices, indicesSize, MeshName));
+    GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, uv, uvSize, normals, normalsSize, faces, facesSize, MeshName));
     return GarbagedMeshes.back();
 }
 

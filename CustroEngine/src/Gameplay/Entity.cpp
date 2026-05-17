@@ -8,7 +8,7 @@ void Entity::Construct(glm::vec3 Position, glm::vec3 Rotation, glm::vec3 Scale)
 
 Entity::Entity()
 {
-    std::cout << "\033[33m" << "CustroEngine::INITIALIZED" << "\033[0m" << std::endl;
+    
 }
 
 Entity::~Entity()

@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec3 InitialPos;
 layout (location = 1) in vec2 TextCoord;
+layout (location = 2) in vec3 Normals;
 
 uniform mat4 model;
 uniform mat4 view;

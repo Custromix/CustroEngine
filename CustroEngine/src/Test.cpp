@@ -55,6 +55,9 @@ private:
     MeshComponent* MeshComp;
     BasicSystem* BasicSystem;
     
+    float AngleSpeed = 45.0f;
+    float Angle = 0.0f;
+    
 public:
     ObjectQuelconque()
     {
@@ -68,10 +71,11 @@ public:
     
     void Start() override
     {
-        MeshComp->SetMesh(Mesh::GetMeshByName("Triangle"));
-        //std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
-        /*
-        if (MeshComp->GetMesh()->GetMeshName())
+        MeshComp->SetMesh(Mesh::GetMeshByName("Cube"));
+        
+        std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
+        
+        /*if (MeshComp->GetMesh()->GetMeshName())
             std::cout << "MESH TROUVE" << std::endl;
         else
         {
@@ -81,25 +85,59 @@ public:
     
     void Update(float deltaTime) override
     {
-        //std::cout << "DeltaTime = " + std::to_string(deltaTime)  << std::endl;
+        Angle += AngleSpeed * deltaTime;
+        GetTransform()->SetRotation(glm::vec3(Angle, Angle, 0.0f));
+        std::cout << "Angle : " << Angle << std::endl;
     }
 
 };
 
 int main() {
     
-
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-       -0.5f, -0.5f, 0.0f,  // bottom left
-       -0.5f,  0.5f, 0.0f   // top left 
+        -0.5,  0.5,  0.5, // top left devant
+         0.5,  0.5,  0.5, // top right devant
+         0.5, -0.5,  0.5, // bottom right devant
+        -0.5, -0.5,  0.5, // bottom left devant
+
+        -0.5,  0.5,  -0.5, // top left  derrier
+         0.5,  0.5,  -0.5, // top right derrier
+         0.5, -0.5,  -0.5, // bottom right derrier
+        -0.5, -0.5,  -0.5  // bottom left derrier
     };
     
-    uint32 indices[] = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    };  
+    float uv[] = {
+        1.0f, 1.0f,     // top right
+        1.0f, 0.0f,     // bottom right
+        0.0f, 0.0f,     // bottom left
+        0.0f, 1.0f,     // top left 
+        
+        1.0f, 1.0f,     // top right
+        1.0f, 0.0f,     // bottom right
+        0.0f, 0.0f,     // bottom left
+        0.0f, 1.0f,     // top left 
+    };
+    
+    uint32 indices[] = {
+        // Devant
+        0, 1, 2,
+        2, 3, 0,
+        // Derrière
+        4, 5, 6,
+        6, 7, 4,
+        // Droite
+        1, 5, 6,
+        6, 2, 1,
+        // Gauche
+        0, 4, 7,
+        7, 3, 0,
+        // Haut
+        0, 1, 5,
+        5, 4, 0,
+        // Bas
+        3, 2, 6,
+        6, 7, 3,
+    };
     
     
     
@@ -109,19 +147,17 @@ int main() {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     
     CustroEngine* Engine = new CustroEngine();
-    //Engine->Init();
     
-    Engine->ImportMesh(vertices, sizeof(vertices), indices, sizeof(indices), "Triangle");
+    Engine->ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
     
     Scene* MyScene = Engine->CreateScene();
     
     Engine->SetCurrentScene(MyScene);
     
-    //GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
+    GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
     ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(0.0f, 0.0f, 0.0f));
     
-    Cube->GetTransform()->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     
     
     // Code du jeu
@@ -132,8 +168,6 @@ int main() {
     
     
     _CrtDumpMemoryLeaks();
-    
-
     
     
     return 0;

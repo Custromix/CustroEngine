@@ -101,20 +101,20 @@ void Mesh::ImportMesh(uint32 indices[], size_t indicesSize)
     glBufferData(GL_ARRAY_BUFFER,  sizeof(Vertex) * Vertices.size(),  Vertices.data(), GL_STATIC_DRAW);
     
     //Vertices
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0); // Active layout 0
     
     if (hasUV)
     {
         //UVs
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3* sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
         glEnableVertexAttribArray(1); // Active layout 1 
     }
     
     if (hasNormals)
     {
         //Normal
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(5* sizeof(float)));
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
         glEnableVertexAttribArray(2); // Active layout 2
     }
     

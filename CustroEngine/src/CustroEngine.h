@@ -2,7 +2,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Shader.h"
 #include "Gameplay/Mesh.h"
 #include "Gameplay/Scene.h"
 #include "Render/Renderer.h"

@@ -12,5 +12,6 @@ MeshComponent::~MeshComponent()
     Renderer::Get().UnSubscribe(this);
     
     usableMesh = nullptr;
+    usableShader = nullptr;
     _Owner = nullptr;
 }

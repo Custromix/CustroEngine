@@ -6,7 +6,6 @@
 #endif
 
 #include "CustroEngine.h"
-#include "Shader.h"
 #include "Gameplay/Entity.h"
 #include "Gameplay/Scene.h"
 #include "Gameplay/Components/MeshComponent.h"
@@ -72,12 +71,16 @@ public:
     void Start() override
     {
         MeshComp->SetMesh(Mesh::GetMeshByName("Cube"));
+        //Shader* RougeShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/DefaultShader.glsl", "RedShader");
+        MeshComp->SetShader(RougeShader);
         
         std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
         
         /*if (MeshComp->GetMesh()->GetMeshName())
             std::cout << "MESH TROUVE" << std::endl;
         else
+
+
         {
             std::cout << "MESH NOT TROUVE" << std::endl;
         }*/

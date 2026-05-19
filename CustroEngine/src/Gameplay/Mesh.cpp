@@ -10,15 +10,13 @@ std::map<const String, Mesh*> Mesh::AllMeshesMap;
 
 Mesh::Mesh(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String NewMeshName)
 {
-    
-
     MeshName = NewMeshName;
     verticesCount = verticesSize/(sizeof(float)*3);
     totalDrawingVertices = indicesSize/sizeof(uint32);
     trianglesCount = indicesSize/(sizeof(uint32)*3);
     
     std::cout << "verticesCount: " << verticesCount << std::endl;
-    std::cout << "facesCount: " << trianglesCount << std::endl;
+    std::cout << "indicesCount: " << trianglesCount << std::endl;
     
     AllMeshesMap[MeshName] = this;
     
@@ -28,7 +26,9 @@ Mesh::Mesh(float verticesData[], size_t verticesSize, float uv[], size_t uvSize,
 
 Mesh::~Mesh()
 {
-    std::cout << "Mesh destroyed: " << MeshName << " VAO: " << VAO << std::endl;
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     AllMeshesMap.erase(MeshName);
 }
 

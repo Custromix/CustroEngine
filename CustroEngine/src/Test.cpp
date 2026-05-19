@@ -52,7 +52,7 @@ class ObjectQuelconque : public Entity
     
 private:
     MeshComponent* MeshComp;
-    BasicSystem* BasicSystem;
+    BasicSystem* BasicSystemComp;
     
     float AngleSpeed = 45.0f;
     float Angle = 0.0f;
@@ -61,7 +61,7 @@ public:
     ObjectQuelconque()
     {
         MeshComp = AddComponent<MeshComponent>();
-        BasicSystem = AddComponent<class BasicSystem>();
+        BasicSystemComp = AddComponent<class BasicSystem>();
     }
     
     ~ObjectQuelconque() override
@@ -75,22 +75,12 @@ public:
         MeshComp->GetShader()->SetTexture(Texture::GetTextureByName("container"), "aTexture");
         
         std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
-        
-        /*if (MeshComp->GetMesh()->GetMeshName())
-            std::cout << "MESH TROUVE" << std::endl;
-        else
-
-
-        {
-            std::cout << "MESH NOT TROUVE" << std::endl;
-        }*/
     }
     
     void Update(float deltaTime) override
     {
         Angle += AngleSpeed * deltaTime;
         GetTransform()->SetRotation(glm::vec3(Angle, Angle*0.8, 0.0f));
-        //std::cout << "Angle : " << Angle << std::endl;
     }
 
 };
@@ -154,6 +144,7 @@ int main() {
         20, 21, 22, 22, 23, 20, // Bottom
     };
     
+    
     //_CrtSetBreakAlloc(658); // le numéro de la fuite
     
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -179,9 +170,6 @@ int main() {
     Engine->Lunch();
     
     delete Engine;
-    
-    
-    _CrtDumpMemoryLeaks();
     
     
     return 0;

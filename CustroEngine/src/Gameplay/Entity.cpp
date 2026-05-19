@@ -18,14 +18,6 @@ Entity::~Entity()
         delete EntityComponents[i];
         EntityComponents[i] = nullptr;
     }
-    
-    /*
-    for (int i = 0; i < Components.size(); i++)
-    {
-        delete Components[i];
-        Components[i] = nullptr;
-    }*/
-    
 }
 
 void Entity::Start()

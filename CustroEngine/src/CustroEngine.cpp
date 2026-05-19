@@ -41,8 +41,6 @@ CustroEngine::CustroEngine()
 
 CustroEngine::~CustroEngine()
 {
-    delete shader;
-    
     for (int i = 0; i < GarbagedScene.size(); ++i)
     {
         delete GarbagedScene[i];
@@ -91,9 +89,9 @@ void CustroEngine::SetCurrentScene(Scene* Scene)
 }*/
 
 //TODO: Supprimer cette fonction quand on aura fait le parser
-Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 faces[], size_t facesSize, const String MeshName)
+Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String MeshName)
 {
-    GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, uv, uvSize, normals, normalsSize, faces, facesSize, MeshName));
+    GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, uv, uvSize, normals, normalsSize, indices, indicesSize, MeshName));
     return GarbagedMeshes.back();
 }
 
@@ -173,7 +171,6 @@ void CustroEngine::Update()
 
         }
         
-        
         for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
         {
             currentScene->GetGameObjects()[i]->Update(deltaTime);
@@ -186,13 +183,12 @@ void CustroEngine::Update()
         
         Renderer::Get().Render();
         
-        /*for (int i = 0; i < currentScene->GetMeshComponents().size(); ++i)
-        {
-            currentScene->GetMeshComponents()[i]->GetMesh()->Render();
-        }*/
-        
         glfwSwapBuffers(window);
         glfwPollEvents();
+        
+        _CrtMemState memState;
+        _CrtMemCheckpoint(&memState);
+        std::cout << "Heap used: " << memState.lSizes[_NORMAL_BLOCK] << " bytes" << std::endl;
     }
     
     glfwDestroyWindow(window);

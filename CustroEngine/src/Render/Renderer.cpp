@@ -2,6 +2,12 @@
 
 #include "CustroEngine.h"
 
+Renderer::~Renderer()
+{
+    delete VertexShader;
+    delete FragmentShader;
+}
+
 void Renderer::Init()
 {
     glViewport(0, 0, CustroEngine::WINDOW_WIDTH, CustroEngine::WINDOW_HEIGHT);

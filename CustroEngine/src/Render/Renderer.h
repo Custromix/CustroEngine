@@ -12,6 +12,8 @@ public:
         return instance;
     }
     
+    ~Renderer();
+    
     void Init();
     
     void Subscribe(MeshComponent* component);

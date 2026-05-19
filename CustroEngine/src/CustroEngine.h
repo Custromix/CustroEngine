@@ -21,7 +21,7 @@ public:
     
     //Mesh* ImportMesh(char path, const char* MeshName);
     //TODO: Supprimer cette fonction quand on aura fait le parser
-    Mesh* ImportMesh(float* vertices, size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 faces[], size_t facesSize, const String MeshName);
+    Mesh* ImportMesh(float* vertices, size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String MeshName);
     
     Shader* ImportShader(const String ShaderPath, const String MeshName);
     
@@ -38,8 +38,6 @@ private:
     GLFWwindow* window = nullptr;
     
     Scene* currentScene = nullptr;
-    
-    Shader* shader = nullptr;
     
     std::vector<Mesh*> GarbagedMeshes;
     

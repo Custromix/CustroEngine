@@ -17,6 +17,7 @@ using namespace Engine;
 class Shader
 {
 public:
+	Shader() {}
 	Shader(const String shaderPath, const String shaderName);
 	
 	std::vector<Texture*> GetTextures() const { return textures; }

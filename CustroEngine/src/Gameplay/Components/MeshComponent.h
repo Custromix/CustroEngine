@@ -14,14 +14,14 @@ public:
     ~MeshComponent() override;
     
     void SetMesh(Mesh* importedMesh) { usableMesh = importedMesh; }
-    void SetShader(Shader* importedShader) { usableShader = importedShader; }
+    void SetShader(Shader importedShader) { usableShader = importedShader; }
     
     
-    Mesh* GetMesh() const { return usableMesh; }
-    Shader* GetShader() const { return usableShader; }
+    Mesh* GetMesh() { return usableMesh; }
+    Shader& GetShader() { return usableShader; }
 
 private:
     Mesh* usableMesh = nullptr;
     
-    Shader* usableShader = nullptr;
+    Shader usableShader;
 };

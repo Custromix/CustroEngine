@@ -30,10 +30,14 @@ Texture::Texture(String path, String name)
     }
     
     stbi_image_free(data);
+    
+    AllTexturesMap[name] = this;
 }
 
 Texture::~Texture()
 {
+    glDeleteTextures(1, &ID);
+    AllTexturesMap.erase(Name);
 }
 
 Texture* Texture::GetTextureByName(const String name)

@@ -126,25 +126,21 @@ void Renderer::Render()
         if (!MeshComponents[iMesh])
             return;
         
-        glUseProgram(MeshComponents[iMesh]->GetShader()->ProgramID);
+        glUseProgram(MeshComponents[iMesh]->GetShader().ProgramID);
 
-        for (uint32 iTexture = 0; iTexture < MeshComponents[iMesh]->GetShader()->GetTextures().size(); ++iTexture)
+        for (uint32 iTexture = 0; iTexture < MeshComponents[iMesh]->GetShader().GetTextures().size(); ++iTexture)
         {
             glActiveTexture(GL_TEXTURE0 + iTexture);
-            auto* text = MeshComponents[iMesh]->GetShader()->GetTextures()[iTexture];
-            
-            int b = 2;
-            //glBindTexture(GL_TEXTURE_2D, MeshComponents[iMesh]->GetShader()->GetTextures()[iTexture]->GetID());
+            glBindTexture(GL_TEXTURE_2D, MeshComponents[iMesh]->GetShader().GetTextures()[iTexture]->GetID());
         }
-
         
-        MeshComponents[iMesh]->GetShader()->setMatrix4("model", MeshComponents[iMesh]->Owner()->GetTransform()->GetModel());
-        MeshComponents[iMesh]->GetShader()->setMatrix4("view", view);
-        MeshComponents[iMesh]->GetShader()->setMatrix4("projection", projection);
+        MeshComponents[iMesh]->GetShader().setMatrix4("model", MeshComponents[iMesh]->Owner()->GetTransform()->GetModel());
+        MeshComponents[iMesh]->GetShader().setMatrix4("view", view);
+        MeshComponents[iMesh]->GetShader().setMatrix4("projection", projection);
         
         MeshComponents[iMesh]->GetMesh()->Draw();
         
-        glDeleteProgram(MeshComponents[iMesh]->GetShader()->ProgramID);
+        glDeleteProgram(MeshComponents[iMesh]->GetShader().ProgramID);
     }
 }
 

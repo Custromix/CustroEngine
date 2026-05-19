@@ -73,6 +73,13 @@ void Shader::setMatrix4(const std::string& name, glm::mat4 model)
 
 void Shader::SetTexture(Texture* texture, String TextureName)
 {
+    if (!texture)
+    {
+        std::cout << "ERROR::SHADER::TEXTURE NOT SET ligne 78" << std::endl;
+        return;
+    }
+        
+    
     glUseProgram(ProgramID);
     
     uint32 slot = textures.size();

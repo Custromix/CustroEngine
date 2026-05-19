@@ -49,8 +49,9 @@ public:
 
 class ObjectQuelconque : public Entity
 {
+public:
+    Texture* aTexture;
     
-private:
     MeshComponent* MeshComp;
     BasicSystem* BasicSystemComp;
     
@@ -71,8 +72,8 @@ public:
     void Start() override
     {
         MeshComp->SetMesh(Mesh::GetMeshByName("Cube"));
-        MeshComp->SetShader(Shader::GetShaderByName("DefaultShader"));
-        MeshComp->GetShader()->SetTexture(Texture::GetTextureByName("container"), "aTexture");
+        MeshComp->SetShader(*Shader::GetShaderByName("DefaultShader"));
+        MeshComp->GetShader().SetTexture(aTexture, "aTexture");
         
         std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
     }
@@ -154,6 +155,7 @@ int main() {
     Engine->ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
     Engine->ImportShader("D:/Pro/Others/CustroEngine/CustroEngine/src/DefaultShader.glsl", "DefaultShader");
     Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/container.jpg");
+    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/AM.png", "awesomeface");
     
     Scene* MyScene = Engine->CreateScene();
     
@@ -161,8 +163,11 @@ int main() {
     
     GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
-    ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(0.0f, 0.0f, 0.0f));
+    ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(-0.8f, 0.0f, -0.5f));
+    Cube->aTexture = Texture::GetTextureByName("container");
     
+    ObjectQuelconque* Cube2 = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(0.8f, 0.0f, -0.5f));
+    Cube2->aTexture = Texture::GetTextureByName("awesomeface");
     
     
     // Code du jeu

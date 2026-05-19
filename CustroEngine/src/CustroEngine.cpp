@@ -188,7 +188,7 @@ void CustroEngine::Update()
         
         _CrtMemState memState;
         _CrtMemCheckpoint(&memState);
-        std::cout << "Heap used: " << memState.lSizes[_NORMAL_BLOCK] << " bytes" << std::endl;
+        //std::cout << "Heap used: " << memState.lSizes[_NORMAL_BLOCK] << " bytes" << std::endl;
     }
     
     glfwDestroyWindow(window);

@@ -4,6 +4,9 @@ namespace Engine
 {
     String::String(const char* str)
     {
+        if (!str)
+            return;
+        
         length = strlen(str);
         data = new char[length + 1];
         strcpy(data, str);
@@ -73,6 +76,11 @@ namespace Engine
     const char* String::CStr() const
     {
         return data;
+    }
+
+    bool String::IsEmpty() const
+    {
+        return length == 0;
     }
 
     String String::Substring(size_t start, size_t count) const

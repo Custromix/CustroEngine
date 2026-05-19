@@ -25,6 +25,8 @@ namespace Engine
         size_t      Length() const;
         const char* CStr()   const;
 
+        bool IsEmpty() const;
+        
         String Substring(size_t start, size_t count) const;
         bool   Contains(const String& other) const;
         void   Append(const String& other);

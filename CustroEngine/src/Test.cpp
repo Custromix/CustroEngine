@@ -71,8 +71,8 @@ public:
     void Start() override
     {
         MeshComp->SetMesh(Mesh::GetMeshByName("Cube"));
-        //Shader* RougeShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/DefaultShader.glsl", "RedShader");
-        MeshComp->SetShader(RougeShader);
+        MeshComp->SetShader(Shader::GetShaderByName("DefaultShader"));
+        MeshComp->GetShader()->SetTexture(Texture::GetTextureByName("container"), "aTexture");
         
         std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
         
@@ -89,8 +89,8 @@ public:
     void Update(float deltaTime) override
     {
         Angle += AngleSpeed * deltaTime;
-        GetTransform()->SetRotation(glm::vec3(Angle, Angle, 0.0f));
-        std::cout << "Angle : " << Angle << std::endl;
+        GetTransform()->SetRotation(glm::vec3(Angle, Angle*0.8, 0.0f));
+        //std::cout << "Angle : " << Angle << std::endl;
     }
 
 };
@@ -98,60 +98,71 @@ public:
 int main() {
     
     float vertices[] = {
-        -0.5,  0.5,  0.5, // top left devant
-         0.5,  0.5,  0.5, // top right devant
-         0.5, -0.5,  0.5, // bottom right devant
-        -0.5, -0.5,  0.5, // bottom left devant
+        // Front
+        -0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        // Back
+         0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+        // Right
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+        // Left
+        -0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
+        // Top
+        -0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        // Bottom
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+    };
 
-        -0.5,  0.5,  -0.5, // top left  derrier
-         0.5,  0.5,  -0.5, // top right derrier
-         0.5, -0.5,  -0.5, // bottom right derrier
-        -0.5, -0.5,  -0.5  // bottom left derrier
-    };
-    
     float uv[] = {
-        1.0f, 1.0f,     // top right
-        1.0f, 0.0f,     // bottom right
-        0.0f, 0.0f,     // bottom left
-        0.0f, 1.0f,     // top left 
-        
-        1.0f, 1.0f,     // top right
-        1.0f, 0.0f,     // bottom right
-        0.0f, 0.0f,     // bottom left
-        0.0f, 1.0f,     // top left 
+        // Front
+        0.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f,
+        // Back
+        0.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f,
+        // Right
+        0.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f,
+        // Left
+        0.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f,
+        // Top
+        0.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f,
+        // Bottom
+        0.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f,
     };
-    
+
     uint32 indices[] = {
-        // Devant
-        0, 1, 2,
-        2, 3, 0,
-        // Derrière
-        4, 5, 6,
-        6, 7, 4,
-        // Droite
-        1, 5, 6,
-        6, 2, 1,
-        // Gauche
-        0, 4, 7,
-        7, 3, 0,
-        // Haut
-        0, 1, 5,
-        5, 4, 0,
-        // Bas
-        3, 2, 6,
-        6, 7, 3,
+        0,  1,  2,  2,  3,  0,  // Front
+        4,  5,  6,  6,  7,  4,  // Back
+        8,  9,  10, 10, 11, 8,  // Right
+        12, 13, 14, 14, 15, 12, // Left
+        16, 17, 18, 18, 19, 16, // Top
+        20, 21, 22, 22, 23, 20, // Bottom
     };
-    
-    
     
     //_CrtSetBreakAlloc(658); // le numéro de la fuite
-    
     
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     
     CustroEngine* Engine = new CustroEngine();
     
     Engine->ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
+    Engine->ImportShader("D:/Pro/Others/CustroEngine/CustroEngine/src/DefaultShader.glsl", "DefaultShader");
+    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/container.jpg");
     
     Scene* MyScene = Engine->CreateScene();
     

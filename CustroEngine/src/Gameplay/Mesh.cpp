@@ -40,7 +40,7 @@ Mesh* Mesh::GetMeshByName(const String MeshName)
     return nullptr;
 }
 
-void Mesh::Render()
+void Mesh::Draw()
 {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, totalDrawingVertices, GL_UNSIGNED_INT, 0);

@@ -17,13 +17,15 @@ public:
     void Subscribe(MeshComponent* component);
     void UnSubscribe(MeshComponent* component);
     
+    Shader* CreateShader(const String ShaderPath, const String MeshName);
+    
     
     void InjectShaderCode(String shaderCode);
     uint32 CreateShaderPass(GLuint program, const char* PipelineShaderCode);
     uint32 CreateShaderPass(GLuint program, const char* PipelineShaderCode, const char* CustomShaderCode);
     
     
-    void Draw();
+    void Render();
     
     // Supprimer la copie
     Renderer(const Renderer&) = delete;
@@ -31,8 +33,6 @@ public:
     
 private:
     Renderer() {}
-    
-    uint32 ProgramId = 0;
     
     std::vector<MeshComponent*> MeshComponents;
     

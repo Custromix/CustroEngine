@@ -4,6 +4,8 @@
 
 #include "utils/stb_image.h"
 
+std::map<const String, Texture*> Texture::AllTexturesMap;
+
 Texture::Texture(String path, String name)
 {
     glGenTextures(1, &ID);
@@ -24,15 +26,20 @@ Texture::Texture(String path, String name)
     else
     {
         std::cout << "Failed to load texture" << std::endl;
+        delete this;
     }
     
     stbi_image_free(data);
-    
-    
-    if (name == "")
-        Name = name;
 }
 
 Texture::~Texture()
 {
+}
+
+Texture* Texture::GetTextureByName(const String name)
+{
+    auto it = AllTexturesMap.find(name);
+    if (it != AllTexturesMap.end())
+        return it->second;
+    return nullptr;
 }

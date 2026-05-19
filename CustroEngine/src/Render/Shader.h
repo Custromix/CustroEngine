@@ -1,14 +1,14 @@
 #pragma once
 
-#include <glad/glad.h> // include glad to get all the required OpenGL headers
+#include <glad/glad.h>
   
 #include <string>
-#include <fstream>
-#include <sstream>
 #include <iostream>
+#include <map>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Texture.h"
 #include "types.hpp"
 #include "utils/String.h"
 
@@ -17,17 +17,30 @@ using namespace Engine;
 class Shader
 {
 public:
-	Shader(const String& shaderPath, const String& shaderName);
+	Shader(const String shaderPath, const String shaderName);
+	
+	std::vector<Texture*> GetTextures() const { return textures; }
 
-	static void setBoolean(uint32 ProgramID, const std::string& name, bool value);
-	static void setInteger(uint32 ProgramID, const std::string& name, int value);
-	static void setFloat(uint32 ProgramID, const std::string& name, float value);  
-	static void setVector2(uint32 ProgramID, const std::string& name, float x, float y);
-	static void setVector3(uint32 ProgramID, const std::string& name, float x, float y, float z);
-	static void setVector3(uint32 ProgramID, const std::string& name, glm::vec3 vec3);
-	static void setMatrix4(uint32 ProgramID, const std::string& name, glm::mat4 model);
+	void setBoolean(const std::string& name, bool value);
+	void setInteger(const std::string& name, int value);
+	void setFloat(const std::string& name, float value);  
+	void setVector2(const std::string& name, float x, float y);
+	void setVector3(const std::string& name, float x, float y, float z);
+	void setVector3(const std::string& name, glm::vec3 vec3);
+	void setMatrix4(const std::string& name, glm::mat4 model);
+	
+	void SetTexture(Texture* texture, String TextureName);
+	
+	static Shader* GetShaderByName(const String name);
 	
 	String ShaderCode;
 	
 	String Name;
+	
+	uint32 ProgramID;
+	
+	static std::map<const String, Shader*> AllShadersMap;
+	
+private:
+	std::vector<Texture*> textures;
 };

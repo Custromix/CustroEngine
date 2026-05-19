@@ -18,7 +18,7 @@ public:
     
     static Mesh* GetMeshByName(const String MeshName);
     
-    void Render();
+    void Draw();
     
 private:
     void ParseVertices(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normal[], size_t normalSize);

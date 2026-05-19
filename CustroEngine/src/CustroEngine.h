@@ -21,11 +21,11 @@ public:
     
     //Mesh* ImportMesh(char path, const char* MeshName);
     //TODO: Supprimer cette fonction quand on aura fait le parser
-    Mesh* ImportMesh(float* vertices, size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 faces[], size_t facesSize, const char* MeshName);
+    Mesh* ImportMesh(float* vertices, size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 faces[], size_t facesSize, const String MeshName);
     
-    Texture* ImportTexture(String TexturePath);
+    Shader* ImportShader(const String ShaderPath, const String MeshName);
     
-    Mesh* GetMesh(const String MeshName);
+    Texture* ImportTexture(const String TexturePath, String TextureName = "");
     
     Scene* CreateScene();
     
@@ -42,6 +42,8 @@ private:
     Shader* shader = nullptr;
     
     std::vector<Mesh*> GarbagedMeshes;
+    
+    std::vector<Shader*> GarbagedShaders;
     
     std::vector<Texture*> GarbagedTexture;
     

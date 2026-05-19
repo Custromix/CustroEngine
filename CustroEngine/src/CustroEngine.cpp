@@ -32,12 +32,7 @@ CustroEngine::CustroEngine()
         std::cout << "Failed to initialize GLAD" << std::endl;
     } 
     
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //Désactive le cursor
-    
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    //glEnable(GL_DEPTH_TEST);
     
     Renderer::Get().Init();
     
@@ -61,6 +56,11 @@ CustroEngine::~CustroEngine()
         GarbagedMeshes[i] = nullptr;
     }
     
+    for (int i = 0; i < GarbagedShaders.size(); ++i)
+    {
+        delete GarbagedShaders[i];
+        GarbagedShaders[i] = nullptr;
+    }
     
     currentScene = nullptr;
     
@@ -91,22 +91,31 @@ void CustroEngine::SetCurrentScene(Scene* Scene)
 }*/
 
 //TODO: Supprimer cette fonction quand on aura fait le parser
-Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 faces[], size_t facesSize, const char* MeshName)
+Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 faces[], size_t facesSize, const String MeshName)
 {
     GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, uv, uvSize, normals, normalsSize, faces, facesSize, MeshName));
     return GarbagedMeshes.back();
 }
 
-Texture* CustroEngine::ImportTexture(String TexturePath)
+Shader* CustroEngine::ImportShader(const String ShaderPath, const String MeshName)
 {
-    GarbagedTexture.push_back(new Texture(TexturePath));
-    return GarbagedTexture.back();
+    GarbagedShaders.push_back(Renderer::Get().CreateShader(ShaderPath, MeshName));
+    return GarbagedShaders.back();
 }
 
-Mesh* CustroEngine::GetMesh(const String MeshName)
+Texture* CustroEngine::ImportTexture(const String TexturePath, String TextureName)
 {
-    //Mesh::GetMesh();
-    return nullptr;
+    if (TextureName.IsEmpty())
+    {
+        std::string stdStringPath = TexturePath.CStr();
+        std::string filename = stdStringPath.substr(stdStringPath.find_last_of("/\\") + 1);
+        filename = filename.substr(0, filename.find_last_of("."));
+    
+        TextureName = filename.c_str();
+    }
+    
+    GarbagedTexture.push_back(new Texture(TexturePath, TextureName));
+    return GarbagedTexture.back();
 }
 
 Scene* CustroEngine::CreateScene()
@@ -153,18 +162,17 @@ void CustroEngine::Update()
         lastTime = currentTime;
         
         seconds += deltaTime;
+        CountFPS++;
         
         if (seconds >= 1.0f)
         {
-            CountFPS++;
-            seconds = 0.f;
             FPS = CountFPS;
             CountFPS = 0;
+            seconds = 0.f;
+            std::cout << " FPS : " + std::to_string(FPS) << std::endl;
+
         }
-        else
-            CountFPS++;
         
-        //std::cout << " FPS : " + std::to_string(FPS) << std::endl;
         
         for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
         {
@@ -176,7 +184,7 @@ void CustroEngine::Update()
         glClearColor(Utils::NormalizeRGB(78.f), Utils::NormalizeRGB(159.f), Utils::NormalizeRGB(229.f), 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        Renderer::Get().Draw();
+        Renderer::Get().Render();
         
         /*for (int i = 0; i < currentScene->GetMeshComponents().size(); ++i)
         {

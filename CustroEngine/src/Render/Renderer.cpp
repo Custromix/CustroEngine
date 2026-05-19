@@ -4,6 +4,11 @@
 
 void Renderer::Init()
 {
+    glViewport(0, 0, CustroEngine::WINDOW_WIDTH, CustroEngine::WINDOW_HEIGHT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glfwSwapInterval(0);
+    glEnable(GL_DEPTH_TEST);
+    
     VertexShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/vertexShader.glsl", "VertexShader");
     FragmentShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/fragmentShader.glsl", "FragmentShader");
     
@@ -19,6 +24,37 @@ void Renderer::Subscribe(MeshComponent* component)
 void Renderer::UnSubscribe(MeshComponent* component)
 {
     MeshComponents.erase(std::remove(MeshComponents.begin(), MeshComponents.end(), component), MeshComponents.end());
+}
+
+Shader* Renderer::CreateShader(const String ShaderPath, const String MeshName)
+{
+    int  success;
+    char infoLog[512];
+    
+    Shader* MeshShader = new Shader(ShaderPath, MeshName);
+    
+    uint32 VertexShaderID = CreateShaderPass(GL_VERTEX_SHADER, VertexShader->ShaderCode.CStr());
+    uint32 FragmentShaderID = CreateShaderPass(GL_FRAGMENT_SHADER, FragmentShader->ShaderCode.CStr(), MeshShader->ShaderCode.CStr());
+    
+    uint32 ProgramId = glCreateProgram();
+    glAttachShader(ProgramId, VertexShaderID);
+    glAttachShader(ProgramId, FragmentShaderID);
+    glLinkProgram(ProgramId);
+    
+    glGetProgramiv(ProgramId, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(ProgramId, 512, nullptr, infoLog);
+        std::cout << "ERROR::SHADER_PROGRAM::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    
+    glDeleteShader(VertexShaderID);
+    glDeleteShader(FragmentShaderID);
+    
+    glUseProgram(ProgramId);
+    
+    MeshShader->ProgramID = ProgramId;
+    
+    return MeshShader;
 }
 
 void Renderer::InjectShaderCode(String shaderCode)
@@ -56,7 +92,7 @@ uint32 Renderer::CreateShaderPass(GLuint program, const char* PipelineShaderCode
     if (pos != std::string::npos)
         result.replace(pos, strlen("//USER"), CustomShaderCode);
     
-    std::cout << "Vrai SHADER : " << result << std::endl;
+    //std::cout << "Vrai SHADER : " << result << std::endl;
     
     const char* RealShaderCode = result.c_str();
     
@@ -77,52 +113,32 @@ uint32 Renderer::CreateShaderPass(GLuint program, const char* PipelineShaderCode
     return ID;
 }
 
-void Renderer::Draw()
+void Renderer::Render()
 {
-    for (int i = 0; i < MeshComponents.size(); ++i)
+    for (int iMesh = 0; iMesh < MeshComponents.size(); ++iMesh)
     {
-        if (!MeshComponents[i])
+        if (!MeshComponents[iMesh])
             return;
         
-        //TODO: Compile le shader bien avant le draw.
-        
-        int  success;
-        char infoLog[512];
-    
-        uint32 VertexShaderID = CreateShaderPass(GL_VERTEX_SHADER, VertexShader->ShaderCode.CStr());
-        
-        if (!MeshComponents[i]->GetShader())
-        {
-            std::cout << "ERROR::CUSTOM SHADER::NOT SET " << infoLog << std::endl;
+        glUseProgram(MeshComponents[iMesh]->GetShader()->ProgramID);
 
-            return;
-        }
+        for (uint32 iTexture = 0; iTexture < MeshComponents[iMesh]->GetShader()->GetTextures().size(); ++iTexture)
+        {
+            glActiveTexture(GL_TEXTURE0 + iTexture);
+            auto* text = MeshComponents[iMesh]->GetShader()->GetTextures()[iTexture];
             
-        uint32 FragmentShaderID = CreateShaderPass(GL_FRAGMENT_SHADER, FragmentShader->ShaderCode.CStr(), MeshComponents[i]->GetShader()->ShaderCode.CStr());
-     
-    
-        ProgramId = glCreateProgram();
-        glAttachShader(ProgramId, VertexShaderID);
-        glAttachShader(ProgramId, FragmentShaderID);
-        glLinkProgram(ProgramId);
-    
-        glGetProgramiv(ProgramId, GL_LINK_STATUS, &success);
-        if(!success) {
-            glGetProgramInfoLog(ProgramId, 512, nullptr, infoLog);
-            std::cout << "ERROR::SHADER_PROGRAM::COMPILATION_FAILED\n" << infoLog << std::endl;
+            int b = 2;
+            //glBindTexture(GL_TEXTURE_2D, MeshComponents[iMesh]->GetShader()->GetTextures()[iTexture]->GetID());
         }
-    
-        glDeleteShader(VertexShaderID);
-        glDeleteShader(FragmentShaderID);
-    
-        glUseProgram(ProgramId);
+
         
-        Shader::setMatrix4(ProgramId, "model", MeshComponents[i]->Owner()->GetTransform()->GetModel());
-        Shader::setMatrix4(ProgramId, "view", view);
-        Shader::setMatrix4(ProgramId, "projection", projection);
-        MeshComponents[i]->GetMesh()->Render();
+        MeshComponents[iMesh]->GetShader()->setMatrix4("model", MeshComponents[iMesh]->Owner()->GetTransform()->GetModel());
+        MeshComponents[iMesh]->GetShader()->setMatrix4("view", view);
+        MeshComponents[iMesh]->GetShader()->setMatrix4("projection", projection);
+        
+        MeshComponents[iMesh]->GetMesh()->Draw();
+        
+        glDeleteProgram(MeshComponents[iMesh]->GetShader()->ProgramID);
     }
-    
-    glDeleteProgram(ProgramId);
 }
 

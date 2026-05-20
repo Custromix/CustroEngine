@@ -106,8 +106,12 @@ class Player : public Entity
     CameraComponent* Camera;
     
     glm::vec3 Position = GetTransform()->GetPosition();
+    glm::vec3 Rotation = GetTransform()->GetRotation();
     
     float MovementSpeed = 15.0f;
+    
+    
+    float AngleSpeed = 90.0f;
     
 public:
     
@@ -124,20 +128,37 @@ public:
     void Update(float deltaTime) override
     {
         Position = GetTransform()->GetPosition();
+        Rotation = GetTransform()->GetRotation();
+        glm::vec3 forward = GetTransform()->GetForward();
+        glm::vec3 right = GetTransform()->GetRight();
+        glm::vec3 up = GetTransform()->GetUp();
+        
+        std::cout << forward.x << " " << forward.y << " " << forward.z << std::endl;
         
         if (Input::IsKeyPressed(GLFW_KEY_W))
-            Position.z += -MovementSpeed * deltaTime;
+            Position += forward * MovementSpeed * deltaTime;
         if (Input::IsKeyPressed(GLFW_KEY_S))
-            Position.z += MovementSpeed * deltaTime;
+            Position -= forward * MovementSpeed * deltaTime;
         if (Input::IsKeyPressed(GLFW_KEY_A))
-            Position.x += -MovementSpeed * deltaTime;
+            Position -= right * MovementSpeed * deltaTime;
         if (Input::IsKeyPressed(GLFW_KEY_D))
-            Position.x += MovementSpeed * deltaTime;
+            Position += right * MovementSpeed * deltaTime;
         if (Input::IsKeyPressed(GLFW_KEY_Q))
-            Position.y += -MovementSpeed * deltaTime;
+            Position -= up * MovementSpeed * deltaTime;
         if (Input::IsKeyPressed(GLFW_KEY_E))
-            Position.y += MovementSpeed * deltaTime;
+            Position += up * MovementSpeed * deltaTime;
         
+        
+        if (Input::IsKeyPressed(GLFW_KEY_RIGHT))
+            Rotation += glm::vec3(0,1,0) * AngleSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_LEFT))
+            Rotation -= glm::vec3(0,1,0) * AngleSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_UP))
+            Rotation += glm::vec3(1,0,0) * AngleSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_DOWN))
+            Rotation -= glm::vec3(1,0,0) * AngleSpeed * deltaTime;
+        
+        GetTransform()->SetRotation(Rotation);
         GetTransform()->SetPosition(Position);
     }
     

@@ -131,7 +131,10 @@ void Renderer::UpdateViewMatrix()
 
 void Renderer::Render()
 {
-    view = glm::lookAt(CameraSystem::GetActiveCamera()->GetWorldTransform().GetPosition(), CameraSystem::GetActiveCamera()->GetWorldTransform().GetPosition() + CameraSystem::GetActiveCamera()->cameraFront, CameraSystem::GetActiveCamera()->cameraUp);
+    Transform CameraTransform = CameraSystem::GetActiveCamera()->GetWorldTransform();
+    
+    
+    view = glm::lookAt(CameraTransform.GetPosition(), CameraTransform.GetPosition() + CameraTransform.GetForward(), CameraSystem::GetActiveCamera()->cameraUp);
 
     for (int iMesh = 0; iMesh < MeshComponents.size(); ++iMesh)
     {

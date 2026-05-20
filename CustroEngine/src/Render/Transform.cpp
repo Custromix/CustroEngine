@@ -15,6 +15,25 @@ Transform::~Transform()
 {
 }
 
+glm::vec3 Transform::GetForward()
+{
+    glm::vec3 forward;
+    forward.x = cos(glm::radians(Rotation.y)) * cos(glm::radians(Rotation.x));
+    forward.y = sin(glm::radians(Rotation.x));
+    forward.z = sin(glm::radians(Rotation.y)) * cos(glm::radians(Rotation.x));
+    return glm::normalize(forward);
+}
+
+glm::vec3 Transform::GetRight()
+{
+    return glm::normalize(glm::cross(GetForward(), glm::vec3(0, 1, 0)));
+}
+
+glm::vec3 Transform::GetUp()
+{
+    return glm::vec3(0.0f, 1.0f, 0.0f);
+}
+
 void Transform::SetPosition(glm::vec3 position)
 {
     this->Position = position;

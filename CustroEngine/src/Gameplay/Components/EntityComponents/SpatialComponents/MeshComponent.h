@@ -1,13 +1,10 @@
 #pragma once
-#include <vector>
-
-#include "Component.h"
-#include "Gameplay/Entity.h"
 #include "Gameplay/Mesh.h"
+#include "Gameplay/Components/EntityComponents/SpatialComponent.h"
 #include "Render/Shader.h"
 
 
-class MeshComponent : public EntityComponent
+class MeshComponent : public SpatialComponent
 {
 public:
     MeshComponent();

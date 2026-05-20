@@ -8,7 +8,7 @@ class Component
 public:
 	Component();
 	virtual ~Component();
-    
+
 	GameObject* Owner() const { return _Owner; }
 	
 	virtual void SetOwner(GameObject* owner) { _Owner = owner; }

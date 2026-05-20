@@ -4,15 +4,13 @@
 #include "utils/Utils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
+#include "Input/Input.h"
 #include "Render/Texture.h"
-#include "Render/Vertex.h"
 #include "utils/stb_image.h"
 
 
 CustroEngine::CustroEngine()
 {
-    //GameObject::SetEngine(this);
-    
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -34,7 +32,14 @@ CustroEngine::CustroEngine()
     
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //Désactive le cursor
     
+    Input::SetContext(window);
+    
     Renderer::Get().Init();
+
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
+        glViewport(0, 0, width, height);
+        Renderer::Get().UpdateProjectionMatrix(FOV, WINDOW_WIDTH, WINDOW_HEIGHT);
+    });
     
     std::cout << "\033[33m" << "CustroEngine::INITIALIZED" << "\033[0m" << std::endl;
 }
@@ -46,7 +51,6 @@ CustroEngine::~CustroEngine()
         delete GarbagedScene[i];
         GarbagedScene[i] = nullptr;
     }
-    
     
     for (int i = 0; i < GarbagedMeshes.size(); ++i)
     {
@@ -168,7 +172,9 @@ void CustroEngine::Update()
             CountFPS = 0;
             seconds = 0.f;
             std::cout << " FPS : " + std::to_string(FPS) << std::endl;
-
+            _CrtMemState memState;
+            _CrtMemCheckpoint(&memState);
+            std::cout << "Heap used: " << memState.lSizes[_NORMAL_BLOCK] << " bytes" << std::endl;
         }
         
         for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
@@ -185,10 +191,6 @@ void CustroEngine::Update()
         
         glfwSwapBuffers(window);
         glfwPollEvents();
-        
-        _CrtMemState memState;
-        _CrtMemCheckpoint(&memState);
-        //std::cout << "Heap used: " << memState.lSizes[_NORMAL_BLOCK] << " bytes" << std::endl;
     }
     
     glfwDestroyWindow(window);

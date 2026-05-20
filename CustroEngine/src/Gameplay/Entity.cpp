@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-void Entity::Construct(glm::vec3 Position, glm::vec3 Rotation, glm::vec3 Scale)
+void Entity::Construct(const glm::vec3 Position, const glm::vec3 Rotation, const glm::vec3 Scale)
 {
     GameObject::Construct();
     transform = Transform(Position, Rotation, Scale);
@@ -13,26 +13,23 @@ Entity::Entity()
 
 Entity::~Entity()
 {
-    for (int i = 0; i < EntityComponents.size(); i++)
-    {
-        delete EntityComponents[i];
-        EntityComponents[i] = nullptr;
-    }
+    BehaviourComponents.clear();
+    SpatialComponents.clear();
 }
 
 void Entity::Start()
 {
-    for (int i = 0; i < EntityComponents.size(); i++)
+    for (int i = 0; i < BehaviourComponents.size(); i++)
     {
-        EntityComponents[i]->Start();
+        BehaviourComponents[i]->Start();
     }
 }
 
 void Entity::Update(float deltaTime)
 {
-    for (int i = 0; i < EntityComponents.size(); i++)
+    for (int i = 0; i < BehaviourComponents.size(); i++)
     {
-        EntityComponents[i]->Update(deltaTime);
+        BehaviourComponents[i]->Update(deltaTime);
     }
 }
 

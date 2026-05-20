@@ -50,5 +50,6 @@ private:
 public:
     static const uint16 WINDOW_WIDTH = 800;
     static const uint16 WINDOW_HEIGHT = 600;
+    static const uint16 FOV = 70;
     
 };

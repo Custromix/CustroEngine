@@ -5,11 +5,11 @@
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
+#include "CameraSystem.h"
 #include "CustroEngine.h"
 #include "Gameplay/Entity.h"
-#include "Gameplay/Scene.h"
-#include "Gameplay/Components/MeshComponent.h"
-
+#include "Gameplay/Components/EntityComponents/SpatialComponents/CameraComponent.h"
+#include "Input/Input.h"
 
 
 class BasicSystem : public Component
@@ -58,6 +58,10 @@ public:
     float AngleSpeed = 45.0f;
     float Angle = 0.0f;
     
+    float MovementSpeed = 2.0f;
+    
+    glm::vec3 Position = GetTransform()->GetPosition();
+    
 public:
     ObjectQuelconque()
     {
@@ -80,10 +84,63 @@ public:
     
     void Update(float deltaTime) override
     {
+        Position = GetTransform()->GetPosition();
         Angle += AngleSpeed * deltaTime;
         GetTransform()->SetRotation(glm::vec3(Angle, Angle*0.8, 0.0f));
+        
+        /*if (Input::IsKeyPressed(GLFW_KEY_W))
+            Position.y += MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_S))
+            Position.y += -MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_A))
+            Position.x += -MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_D))
+            Position.x += MovementSpeed * deltaTime;
+        
+        GetTransform()->SetPosition(Position);*/
     }
+};
 
+class Player : public Entity
+{
+    CameraComponent* Camera;
+    
+    glm::vec3 Position = GetTransform()->GetPosition();
+    
+    float MovementSpeed = 15.0f;
+    
+public:
+    
+    Player()
+    {
+        Camera = AddComponent<CameraComponent>();
+        CameraSystem::SetActiveCamera(Camera);
+    }
+    
+    void Start() override
+    {
+    }
+    
+    void Update(float deltaTime) override
+    {
+        Position = GetTransform()->GetPosition();
+        
+        if (Input::IsKeyPressed(GLFW_KEY_W))
+            Position.z += -MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_S))
+            Position.z += MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_A))
+            Position.x += -MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_D))
+            Position.x += MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_Q))
+            Position.y += -MovementSpeed * deltaTime;
+        if (Input::IsKeyPressed(GLFW_KEY_E))
+            Position.y += MovementSpeed * deltaTime;
+        
+        GetTransform()->SetPosition(Position);
+    }
+    
 };
 
 int main() {
@@ -145,7 +202,6 @@ int main() {
         20, 21, 22, 22, 23, 20, // Bottom
     };
     
-    
     //_CrtSetBreakAlloc(658); // le numéro de la fuite
     
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -155,13 +211,15 @@ int main() {
     Engine->ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
     Engine->ImportShader("D:/Pro/Others/CustroEngine/CustroEngine/src/DefaultShader.glsl", "DefaultShader");
     Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/container.jpg");
-    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/AM.png", "awesomeface");
+    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/awesomeface.png", "awesomeface");
     
     Scene* MyScene = Engine->CreateScene();
     
     Engine->SetCurrentScene(MyScene);
     
     GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
+    
+    Player* MyPlayer = MyScene->Spawn<class Player>(glm::vec3(0.0f, 0.0f, 0.0f));
     
     ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(-0.8f, 0.0f, -0.5f));
     Cube->aTexture = Texture::GetTextureByName("container");

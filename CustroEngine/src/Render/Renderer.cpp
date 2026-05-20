@@ -1,6 +1,8 @@
 #include "Renderer.h"
 
+#include "CameraSystem.h"
 #include "CustroEngine.h"
+#include "Gameplay/Entity.h"
 
 Renderer::~Renderer()
 {
@@ -18,8 +20,7 @@ void Renderer::Init()
     VertexShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/vertexShader.glsl", "VertexShader");
     FragmentShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/fragmentShader.glsl", "FragmentShader");
     
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
-    projection = glm::perspectiveFov(glm::radians(50.0f), static_cast<float>(CustroEngine::WINDOW_WIDTH), static_cast<float>(CustroEngine::WINDOW_HEIGHT), 0.1f, 100.0f);
+    UpdateProjectionMatrix(CustroEngine::FOV, CustroEngine::WINDOW_WIDTH, CustroEngine::WINDOW_HEIGHT);
 }
 
 void Renderer::Subscribe(MeshComponent* component)
@@ -119,8 +120,19 @@ uint32 Renderer::CreateShaderPass(GLuint program, const char* PipelineShaderCode
     return ID;
 }
 
+void Renderer::UpdateProjectionMatrix(uint32 FOV, uint32 width, uint32 height)
+{
+    projection = glm::perspectiveFov(glm::radians(static_cast<float>(FOV)), static_cast<float>(width), static_cast<float>(height), 0.1f, 100.0f);
+}
+
+void Renderer::UpdateViewMatrix()
+{
+}
+
 void Renderer::Render()
 {
+    view = glm::lookAt(CameraSystem::GetActiveCamera()->GetWorldTransform().GetPosition(), CameraSystem::GetActiveCamera()->GetWorldTransform().GetPosition() + CameraSystem::GetActiveCamera()->cameraFront, CameraSystem::GetActiveCamera()->cameraUp);
+
     for (int iMesh = 0; iMesh < MeshComponents.size(); ++iMesh)
     {
         if (!MeshComponents[iMesh])
@@ -134,7 +146,7 @@ void Renderer::Render()
             glBindTexture(GL_TEXTURE_2D, MeshComponents[iMesh]->GetShader().GetTextures()[iTexture]->GetID());
         }
         
-        MeshComponents[iMesh]->GetShader().setMatrix4("model", MeshComponents[iMesh]->Owner()->GetTransform()->GetModel());
+        MeshComponents[iMesh]->GetShader().setMatrix4("model", MeshComponents[iMesh]->GetWorldTransform().GetModel());
         MeshComponents[iMesh]->GetShader().setMatrix4("view", view);
         MeshComponents[iMesh]->GetShader().setMatrix4("projection", projection);
         
@@ -143,4 +155,3 @@ void Renderer::Render()
         glDeleteProgram(MeshComponents[iMesh]->GetShader().ProgramID);
     }
 }
-

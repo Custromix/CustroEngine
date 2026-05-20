@@ -3,7 +3,7 @@
 #include <concepts>
 
 #include "GameObject.h"
-#include "Components/MeshComponent.h"
+#include "Components/EntityComponents/SpatialComponents/MeshComponent.h"
 
 template <typename T>
 concept SpawnableType = std::is_base_of_v<GameObject, T>;

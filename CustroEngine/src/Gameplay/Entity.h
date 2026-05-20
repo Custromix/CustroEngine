@@ -1,7 +1,10 @@
 #pragma once
+#include <glm/matrix.hpp>
+
 #include "GameObject.h"
-#include "Components/EntityComponent.h"
-#include "Components/Transform.h"
+#include "Components/EntityComponents/BehaviourComponent.h"
+#include "Components/EntityComponents/SpatialComponent.h"
+#include "Render/Transform.h"
 
 
 class Entity: public GameObject
@@ -13,7 +16,7 @@ public:
     ~Entity() override;
     
 private:
-    virtual void Construct(glm::vec3 Position, glm::vec3 Rotation = glm::vec3(0.f, 0.f, 0.f), glm::vec3 Scale = glm::vec3(1.f, 1.f, 1.f)) final;
+    virtual void Construct(const glm::vec3 Position, const glm::vec3 Rotation = glm::vec3(0.f, 0.f, 0.f), const glm::vec3 Scale = glm::vec3(1.f, 1.f, 1.f)) final;
     
 protected:
     template <typename T>
@@ -22,10 +25,13 @@ protected:
         T* comp = new T();
         comp->SetOwner(this);
         
-        if constexpr (std::is_base_of<EntityComponent, T>::value)
-            EntityComponents.push_back(comp);
-        else 
-            Components.push_back(comp);
+        Components.push_back(comp);
+        
+        if constexpr (std::is_base_of<BehaviourComponent, T>::value)
+            BehaviourComponents.push_back(comp);
+        
+        if constexpr (std::is_base_of<SpatialComponent, T>::value)
+            SpatialComponents.push_back(comp);
         
         return comp;
     }
@@ -39,5 +45,6 @@ public:
 private:
     Transform transform;
     
-    std::vector<EntityComponent*> EntityComponents;
+    std::vector<BehaviourComponent*> BehaviourComponents;
+    std::vector<SpatialComponent*> SpatialComponents;
 };

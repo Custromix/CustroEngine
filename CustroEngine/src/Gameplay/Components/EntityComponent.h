@@ -5,19 +5,13 @@ class Entity;
 
 class EntityComponent : public Component
 {
-
+    
 public:
     EntityComponent();
-    ~EntityComponent() override;
+    virtual ~EntityComponent() override = 0;
     
+    void SetOwner(GameObject* owner) final;
     Entity* Owner() const { return _EntityOwner; }
-
-    void SetOwner(GameObject* owner) override;
-    
-    
-public:
-    virtual void Start();
-    virtual void Update(float deltaTime);
     
 private:
     Entity* _EntityOwner = nullptr;

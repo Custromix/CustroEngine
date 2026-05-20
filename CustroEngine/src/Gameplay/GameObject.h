@@ -32,6 +32,7 @@ protected:
     T* AddComponent()
     {
         T* comp = new T();
+        comp->SetOwner(this);
         Components.push_back(comp);
         return comp;
     }

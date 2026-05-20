@@ -1,6 +1,6 @@
 #pragma once
 #include "Shader.h"
-#include "Gameplay/Components/MeshComponent.h"
+#include "Gameplay/Components/EntityComponents/SpatialComponents/MeshComponent.h"
 
 class Renderer
 {
@@ -21,11 +21,12 @@ public:
     
     Shader* CreateShader(const String ShaderPath, const String MeshName);
     
-    
     void InjectShaderCode(String shaderCode);
     uint32 CreateShaderPass(GLuint program, const char* PipelineShaderCode);
     uint32 CreateShaderPass(GLuint program, const char* PipelineShaderCode, const char* CustomShaderCode);
     
+    void UpdateProjectionMatrix(uint32 FOV, uint32 width, uint32 height);
+    void UpdateViewMatrix();
     
     void Render();
     

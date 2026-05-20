@@ -1,7 +1,6 @@
 #pragma once
 #include <map>
 #include "types.hpp"
-#include "Components/Transform.h"
 #include "Render/Vertex.h"
 #include "utils/String.h"
 

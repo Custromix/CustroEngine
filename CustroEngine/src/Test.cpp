@@ -111,7 +111,7 @@ class Player : public Entity
     float MovementSpeed = 15.0f;
     
     
-    float AngleSpeed = 90.0f;
+    float Sensitivity = 150.f;
     
 public:
     
@@ -133,7 +133,10 @@ public:
         glm::vec3 right = GetTransform()->GetRight();
         glm::vec3 up = GetTransform()->GetUp();
         
-        std::cout << forward.x << " " << forward.y << " " << forward.z << std::endl;
+        //std::cout << forward.x << " " << forward.y << " " << forward.z << std::endl;
+        
+        if (Input::IsKeyPressed(GLFW_KEY_ESCAPE))
+            CustroEngine::Quit();
         
         if (Input::IsKeyPressed(GLFW_KEY_W))
             Position += forward * MovementSpeed * deltaTime;
@@ -148,15 +151,21 @@ public:
         if (Input::IsKeyPressed(GLFW_KEY_E))
             Position += up * MovementSpeed * deltaTime;
         
+        float mouseX = Input::GetDeltaX();
+        float mouseY = Input::GetDeltaY();
         
-        if (Input::IsKeyPressed(GLFW_KEY_RIGHT))
-            Rotation += glm::vec3(0,1,0) * AngleSpeed * deltaTime;
-        if (Input::IsKeyPressed(GLFW_KEY_LEFT))
-            Rotation -= glm::vec3(0,1,0) * AngleSpeed * deltaTime;
-        if (Input::IsKeyPressed(GLFW_KEY_UP))
-            Rotation += glm::vec3(1,0,0) * AngleSpeed * deltaTime;
-        if (Input::IsKeyPressed(GLFW_KEY_DOWN))
-            Rotation -= glm::vec3(1,0,0) * AngleSpeed * deltaTime;
+       
+        //std::cout << "XPOS => " << xpos << "YPOS => " << ypos << std::endl;
+        
+        if (mouseX != 0.0f)
+            Rotation += glm::vec3(0,1,0) * mouseX * Sensitivity * deltaTime;
+        if (mouseY != 0.0f)
+            Rotation += glm::vec3(1,0,0) * -mouseY * Sensitivity * deltaTime;
+        
+        if(Rotation.x > 89.0f)
+            Rotation.x = 89.0f;
+        if(Rotation.x < -89.0f)
+            Rotation.x = -89.0f;
         
         GetTransform()->SetRotation(Rotation);
         GetTransform()->SetPosition(Position);
@@ -240,7 +249,7 @@ int main() {
     
     GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
-    Player* MyPlayer = MyScene->Spawn<class Player>(glm::vec3(0.0f, 0.0f, 0.0f));
+    Player* MyPlayer = MyScene->Spawn<class Player>(glm::vec3(0.0f, 0.0f, -3.0f));
     
     ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(-0.8f, 0.0f, -0.5f));
     Cube->aTexture = Texture::GetTextureByName("container");

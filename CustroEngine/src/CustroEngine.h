@@ -29,6 +29,8 @@ public:
     
     Scene* CreateScene();
     
+    static void Quit();
+    
 private:
     void PreStart();
     void Start();
@@ -46,6 +48,8 @@ private:
     std::vector<Texture*> GarbagedTexture;
     
     std::vector<Scene*> GarbagedScene;
+    
+    static CustroEngine* Instance;
 
 public:
     static const uint16 WINDOW_WIDTH = 800;

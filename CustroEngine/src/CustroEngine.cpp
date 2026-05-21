@@ -8,6 +8,7 @@
 #include "Render/Texture.h"
 #include "utils/stb_image.h"
 
+CustroEngine* CustroEngine::Instance;
 
 CustroEngine::CustroEngine()
 {
@@ -30,9 +31,7 @@ CustroEngine::CustroEngine()
         std::cout << "Failed to initialize GLAD" << std::endl;
     } 
     
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //Désactive le cursor
-    
-    Input::SetContext(window);
+    Input::Init(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     
     Renderer::Get().Init();
 
@@ -42,6 +41,8 @@ CustroEngine::CustroEngine()
     });
     
     std::cout << "\033[33m" << "CustroEngine::INITIALIZED" << "\033[0m" << std::endl;
+    
+    Instance = this;
 }
 
 CustroEngine::~CustroEngine()
@@ -126,6 +127,11 @@ Scene* CustroEngine::CreateScene()
     return GarbagedScene.back();
 }
 
+void CustroEngine::Quit()
+{
+    glfwSetWindowShouldClose(Instance->window, true);
+}
+
 void CustroEngine::PreStart()
 {
     
@@ -181,6 +187,8 @@ void CustroEngine::Update()
         {
             currentScene->GetGameObjects()[i]->Update(deltaTime);
         }
+        
+        Input::ResetDeltas();
         
         /***  RENDER  ***/
         

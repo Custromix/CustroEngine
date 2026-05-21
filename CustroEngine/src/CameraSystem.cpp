@@ -1,14 +1,23 @@
 #include "CameraSystem.h"
 
-CameraComponent* CameraSystem::ActiveCamera;
-std::pmr::vector<CameraComponent*> CameraSystem::ActiveCameras;
-
 CameraSystem::CameraSystem()
 {
+    DefaultCamera = new CameraComponent();
+    DefaultCamera->GetWorldTransform().SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    SetActiveCamera(DefaultCamera);
 }
 
 CameraSystem::~CameraSystem()
 {
+    delete DefaultCamera;
+}
+
+void CameraSystem::SetActiveCamera(CameraComponent* camera)
+{
+    ActiveCamera = camera;
+    
+    if (!camera)
+        ActiveCamera = DefaultCamera;
 }
 
 void CameraSystem::AddActiveCamera(CameraComponent* camera)

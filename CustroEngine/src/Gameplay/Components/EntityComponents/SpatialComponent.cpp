@@ -15,6 +15,9 @@ SpatialComponent::~SpatialComponent()
 
 Transform SpatialComponent::GetWorldTransform()
 {
+    if (!Owner())
+        return LocalTransform;
+    
     Transform* parentTransform = Owner()->GetTransform();
     
     Transform World;

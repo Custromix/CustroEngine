@@ -69,6 +69,4 @@ void Input::EnableCursor(bool bEnable)
         glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     else
         glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    
-
 }

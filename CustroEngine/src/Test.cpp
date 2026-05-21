@@ -87,17 +87,6 @@ public:
         Position = GetTransform()->GetPosition();
         Angle += AngleSpeed * deltaTime;
         GetTransform()->SetRotation(glm::vec3(Angle, Angle*0.8, 0.0f));
-        
-        /*if (Input::IsKeyPressed(GLFW_KEY_W))
-            Position.y += MovementSpeed * deltaTime;
-        if (Input::IsKeyPressed(GLFW_KEY_S))
-            Position.y += -MovementSpeed * deltaTime;
-        if (Input::IsKeyPressed(GLFW_KEY_A))
-            Position.x += -MovementSpeed * deltaTime;
-        if (Input::IsKeyPressed(GLFW_KEY_D))
-            Position.x += MovementSpeed * deltaTime;
-        
-        GetTransform()->SetPosition(Position);*/
     }
 };
 
@@ -118,7 +107,8 @@ public:
     Player()
     {
         Camera = AddComponent<CameraComponent>();
-        CameraSystem::SetActiveCamera(Camera);
+        CameraSystem::Get().SetActiveCamera(Camera);
+        //Input::EnableCursor(true);
     }
     
     void Start() override

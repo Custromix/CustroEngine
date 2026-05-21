@@ -4,6 +4,7 @@
 #include "utils/Utils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
+#include "CameraSystem.h"
 #include "Input/Input.h"
 #include "Render/Texture.h"
 #include "utils/stb_image.h"
@@ -146,6 +147,7 @@ void CustroEngine::Start()
     {
         currentScene->GetGameObjects()[i]->StartEngineClass();
     }
+    
 }
 
 void CustroEngine::Update()

@@ -6,20 +6,27 @@
 class CameraSystem
 {
 public:
+    static CameraSystem& Get()
+    {
+        static CameraSystem instance;
+        return instance;
+    }
+    
+    void SetActiveCamera(CameraComponent* camera);
+    
+    void AddActiveCamera(CameraComponent* camera);
+    void RemoveActiveCamera(CameraComponent* camera);
+    
+    CameraComponent* GetActiveCamera() const { return ActiveCamera; }
+    
+private:
     CameraSystem();
     ~CameraSystem();
     
-    static void SetActiveCamera(CameraComponent* camera) { ActiveCamera = camera; }
+    CameraComponent* ActiveCamera;
+    CameraComponent* DefaultCamera;
     
-    static void AddActiveCamera(CameraComponent* camera);
-    static void RemoveActiveCamera(CameraComponent* camera);
+    std::pmr::vector<CameraComponent*> ActiveCameras;
     
-    static CameraComponent* GetActiveCamera() { return ActiveCamera; }
-    
-private:
-    
-    static CameraComponent* ActiveCamera;
-    
-    static std::pmr::vector<CameraComponent*> ActiveCameras;
     
 };

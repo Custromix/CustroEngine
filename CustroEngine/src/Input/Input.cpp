@@ -36,7 +36,7 @@ void Input::Init(GLFWwindow* window, float ScreenX, float ScreenY)
         LastX = (float)xpos;
         LastY = (float)ypos;
         
-        std::cout << "MouseX => " << DeltaX << " MouseY => " << DeltaY << std::endl;
+        //std::cout << "MouseX => " << DeltaX << " MouseY => " << DeltaY << std::endl;
      
     });
 }

@@ -2,16 +2,23 @@
 
 #include "Render/Renderer.h"
 
-MeshComponent::MeshComponent() : usableShader()
+MeshComponent::MeshComponent() : usableMaterial(new Shader(), "")
 {
-    Renderer::Get().Subscribe(this);
+    usableMaterial.GetShader().Subscribe(this);
 }
 
 MeshComponent::~MeshComponent()
 {
-    Renderer::Get().UnSubscribe(this);
+    usableMaterial.GetShader().UnSubscribe(this);
     
     usableMesh = nullptr;
     //usableShader = nullptr;
     _Owner = nullptr;
+}
+
+void MeshComponent::SetMaterial(Material importedMaterial)
+{
+    usableMaterial.GetShader().UnSubscribe(this);
+    usableMaterial = importedMaterial;
+    usableMaterial.GetShader().Subscribe(this);
 }

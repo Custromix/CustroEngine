@@ -3,9 +3,18 @@
 #include <fstream>
 #include <sstream>
 
+#include "Renderer.h"
+
+//#include "Gameplay/Components/EntityComponents/SpatialComponents/MeshComponent.h"
+
 std::map<const String, Shader*> Shader::AllShadersMap;
 
-Shader::Shader(const String shaderPath, const String shaderName)
+Shader::Shader()
+{
+    AllShadersMap[Name] = this;
+}
+
+Shader::Shader(const String shaderPath, const String shaderName, uint32 programID)
 {
     if (shaderName != "")
         Name = shaderName;
@@ -29,12 +38,18 @@ Shader::Shader(const String shaderPath, const String shaderName)
         
         ShaderCode = ShaderStream.str().c_str();
         
+        ProgramID = programID;
+        
+        AllShadersMap[Name] = this;
     }catch (std::ifstream::failure& e)
     {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ " << e.code() << std::endl;
     }
-    
-    AllShadersMap[Name] = this;
+}
+
+Shader::~Shader()
+{
+    Renderer::Get().UnSubscribe(this);
 }
 
 void Shader::setBoolean(const std::string& name, bool value)
@@ -71,22 +86,20 @@ void Shader::setMatrix4(const std::string& name, glm::mat4 model)
     glUniformMatrix4fv(glGetUniformLocation(ProgramID, name.c_str()), 1, GL_FALSE, glm::value_ptr(model));
 }
 
-void Shader::SetTexture(Texture* texture, String TextureName)
+void Shader::setTexture(const String& name, uint32 slot)
 {
-    if (!texture)
-    {
-        std::cout << "ERROR::SHADER::TEXTURE NOT SET ligne 78" << std::endl;
-        return;
-    }
-        
-    
-    glUseProgram(ProgramID);
-    
-    uint32 slot = textures.size();
-    textures.push_back(texture);
-    glUniform1i(glGetUniformLocation(ProgramID, TextureName.CStr()), slot);
+    glUniform1i(glGetUniformLocation(ProgramID, name.CStr()), slot);
 }
 
+void Shader::Subscribe(MeshComponent* component)
+{
+    MeshComponents.push_back(component);
+}
+
+void Shader::UnSubscribe(MeshComponent* component)
+{
+    MeshComponents.erase(std::remove(MeshComponents.begin(), MeshComponents.end(), component), MeshComponents.end());
+}
 Shader* Shader::GetShaderByName(const String name)
 {
     auto it = AllShadersMap.find(name);

@@ -66,6 +66,12 @@ CustroEngine::~CustroEngine()
         GarbagedShaders[i] = nullptr;
     }
     
+    for (int i = 0; i < GarbagedMaterials.size(); ++i)
+    {
+        delete GarbagedMaterials[i];
+        GarbagedMaterials[i] = nullptr;
+    }
+    
     currentScene = nullptr;
     
     glfwDestroyWindow(window);
@@ -120,6 +126,12 @@ Texture* CustroEngine::ImportTexture(const String TexturePath, String TextureNam
     
     GarbagedTexture.push_back(new Texture(TexturePath, TextureName));
     return GarbagedTexture.back();
+}
+
+Material* CustroEngine::CreateMaterialFromShader(const String ShaderName, const String MaterialName)
+{
+    GarbagedMaterials.push_back(new Material(Shader::GetShaderByName(ShaderName), MaterialName));
+    return GarbagedMaterials.back();
 }
 
 Scene* CustroEngine::CreateScene()

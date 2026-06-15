@@ -16,8 +16,7 @@ public:
     
     void Init();
     
-    void Subscribe(MeshComponent* component);
-    void UnSubscribe(MeshComponent* component);
+    void UnSubscribe(Shader* shader);
     
     Shader* CreateShader(const String ShaderPath, const String MeshName);
     
@@ -37,7 +36,7 @@ public:
 private:
     Renderer() {}
     
-    std::vector<MeshComponent*> MeshComponents;
+    std::vector<Shader*> Shaders;
     
     Shader* VertexShader = nullptr;
     Shader* FragmentShader = nullptr;

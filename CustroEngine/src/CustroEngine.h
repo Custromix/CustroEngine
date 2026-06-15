@@ -27,6 +27,8 @@ public:
     
     Texture* ImportTexture(const String TexturePath, String TextureName = "");
     
+    Material* CreateMaterialFromShader(const String ShaderName, const String MaterialName = "");
+    
     Scene* CreateScene();
     
     static void Quit();
@@ -44,6 +46,8 @@ private:
     std::vector<Mesh*> GarbagedMeshes;
     
     std::vector<Shader*> GarbagedShaders;
+    
+    std::vector<Material*> GarbagedMaterials;
     
     std::vector<Texture*> GarbagedTexture;
     

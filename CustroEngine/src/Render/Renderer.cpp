@@ -17,20 +17,15 @@ void Renderer::Init()
     glfwSwapInterval(0);
     glEnable(GL_DEPTH_TEST);
     
-    VertexShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/vertexShader.glsl", "VertexShader");
-    FragmentShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/fragmentShader.glsl", "FragmentShader");
+    VertexShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/vertexShader.glsl", "VertexShader", 0);
+    FragmentShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/fragmentShader.glsl", "FragmentShader", 0);
     
     UpdateProjectionMatrix(CustroEngine::FOV, CustroEngine::WINDOW_WIDTH, CustroEngine::WINDOW_HEIGHT);
 }
 
-void Renderer::Subscribe(MeshComponent* component)
+void Renderer::UnSubscribe(Shader* shader)
 {
-    MeshComponents.push_back(component);
-}
-
-void Renderer::UnSubscribe(MeshComponent* component)
-{
-    MeshComponents.erase(std::remove(MeshComponents.begin(), MeshComponents.end(), component), MeshComponents.end());
+    Shaders.erase(std::remove(Shaders.begin(), Shaders.end(), shader), Shaders.end());
 }
 
 Shader* Renderer::CreateShader(const String ShaderPath, const String MeshName)
@@ -38,12 +33,14 @@ Shader* Renderer::CreateShader(const String ShaderPath, const String MeshName)
     int  success;
     char infoLog[512];
     
-    Shader* MeshShader = new Shader(ShaderPath, MeshName);
-    
-    uint32 VertexShaderID = CreateShaderPass(GL_VERTEX_SHADER, VertexShader->ShaderCode.CStr());
-    uint32 FragmentShaderID = CreateShaderPass(GL_FRAGMENT_SHADER, FragmentShader->ShaderCode.CStr(), MeshShader->ShaderCode.CStr());
-    
     uint32 ProgramId = glCreateProgram();
+    
+    Shader* MeshShader = new Shader(ShaderPath, MeshName, ProgramId);
+    
+    uint32 VertexShaderID = CreateShaderPass(GL_VERTEX_SHADER, VertexShader->GetShaderCode().CStr());
+    uint32 FragmentShaderID = CreateShaderPass(GL_FRAGMENT_SHADER, FragmentShader->GetShaderCode().CStr(), MeshShader->GetShaderCode().CStr());
+    
+    
     glAttachShader(ProgramId, VertexShaderID);
     glAttachShader(ProgramId, FragmentShaderID);
     glLinkProgram(ProgramId);
@@ -59,7 +56,7 @@ Shader* Renderer::CreateShader(const String ShaderPath, const String MeshName)
     
     glUseProgram(ProgramId);
     
-    MeshShader->ProgramID = ProgramId;
+    Shaders.push_back(MeshShader);
     
     return MeshShader;
 }
@@ -135,25 +132,46 @@ void Renderer::Render()
     
     view = glm::lookAt(CameraTransform.GetPosition(), CameraTransform.GetPosition() + CameraTransform.GetForward(), CameraSystem::Get().GetActiveCamera()->cameraUp);
 
+    for (Shader* Shader : Shaders)
+    {
+        glUseProgram(Shader->GetProgramID());
+
+        for (MeshComponent* MeshComp : Shader->GetMeshComponents())
+        {
+            for (uint32 iTexture = 0; iTexture < MeshComp->GetMaterial().GetTextures().size(); ++iTexture)
+            {
+                glActiveTexture(GL_TEXTURE0 + iTexture);
+                glBindTexture(GL_TEXTURE_2D, MeshComp->GetMaterial().GetTextures()[iTexture]->GetID());
+            }
+            
+            Shader->setMatrix4("model", MeshComp->GetWorldTransform().GetModel());
+            Shader->setMatrix4("view", view);
+            Shader->setMatrix4("projection", projection);
+        
+            MeshComp->GetMesh()->Draw();
+        }
+        
+    }
+    
+/*
     for (int iMesh = 0; iMesh < MeshComponents.size(); ++iMesh)
     {
         if (!MeshComponents[iMesh])
             return;
         
-        glUseProgram(MeshComponents[iMesh]->GetShader().ProgramID);
+        glUseProgram(MeshComponents[iMesh]->GetMaterial().GetShader().ProgramID);
 
-        for (uint32 iTexture = 0; iTexture < MeshComponents[iMesh]->GetShader().GetTextures().size(); ++iTexture)
+        for (uint32 iTexture = 0; iTexture < MeshComponents[iMesh]->GetMaterial().GetShader().GetTextures().size(); ++iTexture)
         {
             glActiveTexture(GL_TEXTURE0 + iTexture);
-            glBindTexture(GL_TEXTURE_2D, MeshComponents[iMesh]->GetShader().GetTextures()[iTexture]->GetID());
+            glBindTexture(GL_TEXTURE_2D, MeshComponents[iMesh]->GetMaterial().GetShader().GetTextures()[iTexture]->GetID());
         }
         
-        MeshComponents[iMesh]->GetShader().setMatrix4("model", MeshComponents[iMesh]->GetWorldTransform().GetModel());
-        MeshComponents[iMesh]->GetShader().setMatrix4("view", view);
-        MeshComponents[iMesh]->GetShader().setMatrix4("projection", projection);
+        MeshComponents[iMesh]->GetMaterial().GetShader().setMatrix4("model", MeshComponents[iMesh]->GetWorldTransform().GetModel());
+        MeshComponents[iMesh]->GetMaterial().GetShader().setMatrix4("view", view);
+        MeshComponents[iMesh]->GetMaterial().GetShader().setMatrix4("projection", projection);
         
         MeshComponents[iMesh]->GetMesh()->Draw();
-        
-        glDeleteProgram(MeshComponents[iMesh]->GetShader().ProgramID);
     }
+    */
 }

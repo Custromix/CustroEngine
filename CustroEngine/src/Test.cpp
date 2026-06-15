@@ -76,17 +76,17 @@ public:
     void Start() override
     {
         MeshComp->SetMesh(Mesh::GetMeshByName("Cube"));
-        MeshComp->SetShader(*Shader::GetShaderByName("DefaultShader"));
-        MeshComp->GetShader().SetTexture(aTexture, "aTexture");
+        MeshComp->SetMaterial(*Material::GetMaterialByName("DefaultMaterial"));
+        MeshComp->GetMaterial().SetTexture(aTexture, "aTexture");
         
         std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
     }
     
     void Update(float deltaTime) override
     {
-        Position = GetTransform()->GetPosition();
+        /*Position = GetTransform()->GetPosition();
         Angle += AngleSpeed * deltaTime;
-        GetTransform()->SetRotation(glm::vec3(Angle, Angle*0.8, 0.0f));
+        GetTransform()->SetRotation(glm::vec3(Angle, Angle*0.8, 0.0f));*/
     }
 };
 
@@ -232,6 +232,11 @@ int main() {
     Engine->ImportShader("D:/Pro/Others/CustroEngine/CustroEngine/src/DefaultShader.glsl", "DefaultShader");
     Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/container.jpg");
     Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/awesomeface.png", "awesomeface");
+    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/herbe.jpg", "herbe");
+    
+    
+    Engine->CreateMaterialFromShader("DefaultShader", "DefaultMaterial");
+    
     
     Scene* MyScene = Engine->CreateScene();
     
@@ -240,12 +245,18 @@ int main() {
     GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
     Player* MyPlayer = MyScene->Spawn<class Player>(glm::vec3(0.0f, 0.0f, -3.0f));
+
+    int floorSize[2] = {20, 20};
     
-    ObjectQuelconque* Cube = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(-0.8f, 0.0f, -0.5f));
-    Cube->aTexture = Texture::GetTextureByName("container");
+    for (int i = 0; i < floorSize[0]; ++i)
+    {
+        for (int j = 0; j < floorSize[1]; ++j)
+        {
+            ObjectQuelconque* Floor = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(1.f * i, 1.f, -1.f * j));
+            Floor->aTexture = Texture::GetTextureByName("herbe");
+        }
+    }
     
-    ObjectQuelconque* Cube2 = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(0.8f, 0.0f, -0.5f));
-    Cube2->aTexture = Texture::GetTextureByName("awesomeface");
     
     
     // Code du jeu

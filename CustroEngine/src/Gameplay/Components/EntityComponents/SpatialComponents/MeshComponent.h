@@ -1,7 +1,7 @@
 #pragma once
 #include "Gameplay/Mesh.h"
 #include "Gameplay/Components/EntityComponents/SpatialComponent.h"
-#include "Render/Shader.h"
+#include "Render/Material.h"
 
 
 class MeshComponent : public SpatialComponent
@@ -11,14 +11,14 @@ public:
     ~MeshComponent() override;
     
     void SetMesh(Mesh* importedMesh) { usableMesh = importedMesh; }
-    void SetShader(Shader importedShader) { usableShader = importedShader; }
+    void SetMaterial(Material importedMaterial);
     
     
     Mesh* GetMesh() { return usableMesh; }
-    Shader& GetShader() { return usableShader; }
+    Material& GetMaterial() { return usableMaterial; }
 
 private:
     Mesh* usableMesh = nullptr;
     
-    Shader usableShader;
+    Material usableMaterial;
 };

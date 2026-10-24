@@ -33,7 +33,7 @@ Shader::Shader(const String shaderPath, const String shaderName, uint32 programI
         ShaderFile.open(shaderPath.CStr());
         std::stringstream ShaderStream;
         ShaderStream << ShaderFile.rdbuf();
-        
+        std::cout << "test";
         ShaderFile.close();
         
         ShaderCode = ShaderStream.str().c_str();

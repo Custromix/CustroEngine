@@ -17,8 +17,8 @@ void Renderer::Init()
     glfwSwapInterval(0);
     glEnable(GL_DEPTH_TEST);
     
-    VertexShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/vertexShader.glsl", "VertexShader", 0);
-    FragmentShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shader/fragmentShader.glsl", "FragmentShader", 0);
+    VertexShader = new Shader("D:/Professional/Other/CustroEngine/CustroEngine/src/Render/Shaders/vertexShader.glsl", "VertexShader", 0);
+    FragmentShader = new Shader("D:/Professional/Other/CustroEngine/CustroEngine/src/Render/Shaders/fragmentShader.glsl", "FragmentShader", 0);
     
     UpdateProjectionMatrix(CustroEngine::FOV, CustroEngine::WINDOW_WIDTH, CustroEngine::WINDOW_HEIGHT);
 }
@@ -147,7 +147,7 @@ void Renderer::Render()
             Shader->setMatrix4("model", MeshComp->GetWorldTransform().GetModel());
             Shader->setMatrix4("view", view);
             Shader->setMatrix4("projection", projection);
-        
+            
             MeshComp->GetMesh()->Draw();
         }
         

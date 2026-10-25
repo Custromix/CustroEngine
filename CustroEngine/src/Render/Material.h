@@ -11,7 +11,7 @@ public:
     
     Shader& GetShader() const { return *usableShader; }
     
-    std::vector<Texture*> GetTextures() const { return textures; }
+    const std::vector<Texture*>& GetTextures() const { return textures; }
     
     void setBoolean(const std::string& name, bool value);
     void setInteger(const std::string& name, int value);

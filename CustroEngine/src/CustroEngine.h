@@ -37,7 +37,8 @@ private:
     void PreStart();
     void Start();
     void Update();
-    
+    void DestroyGameObjects(std::vector<GameObject*>& GameObjects);
+
 private:
     GLFWwindow* window = nullptr;
     

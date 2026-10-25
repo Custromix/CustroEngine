@@ -17,13 +17,16 @@ public:
     GameObject();
     virtual ~GameObject();
     
-    virtual void StartEngineClass();
-    
     virtual void Start() = 0;
     
     virtual void Update(float deltaTime) = 0;
     
     String GetName() const { return Name; }
+    
+    void Destroy();
+    
+    bool IsActive() const { return isActive && !isDestroyNextFrame; }
+    void SetActive(const bool NewActive) { isActive = NewActive; }
     
 protected:
     virtual void Construct();
@@ -40,7 +43,8 @@ protected:
 private:
     static void SetEngine(CustroEngine* Engine) { CustroEngineInstance = Engine; }
 
-    
+    virtual void StartEngineClass();
+
 protected:
     std::vector<Component*> Components;
     
@@ -49,5 +53,9 @@ protected:
 private:
     String Name = String("");
     
+    bool isDestroyNextFrame = false;
     
+    static int64_t GameObjectCounter;
+    
+    bool isActive = true;
 };

@@ -39,7 +39,7 @@ public:
 	String GetName()			{	return Name;		}
 	uint32 GetProgramID() const {	return ProgramID;	}
 	
-	std::vector<MeshComponent*> GetMeshComponents() { return MeshComponents; }
+	const std::vector<MeshComponent*>& GetMeshComponents() const { return MeshComponents; }
 	
 	static Shader* GetShaderByName(const String name);
 	

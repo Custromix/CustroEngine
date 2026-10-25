@@ -138,6 +138,9 @@ void Renderer::Render()
 
         for (MeshComponent* MeshComp : Shader->GetMeshComponents())
         {
+            if (!MeshComp->IsActive())
+                continue;
+            
             for (uint32 iTexture = 0; iTexture < MeshComp->GetMaterial().GetTextures().size(); ++iTexture)
             {
                 glActiveTexture(GL_TEXTURE0 + iTexture);

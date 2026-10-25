@@ -13,6 +13,12 @@ public:
 	
 	virtual void SetOwner(GameObject* owner) { _Owner = owner; }
 	
+	bool IsActive() const;
+	void SetActive(const bool NewActive) { isActive = NewActive; }
+	
 protected:
 	GameObject* _Owner;
+	
+private:
+	bool isActive = true;
 };

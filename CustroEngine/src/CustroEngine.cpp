@@ -80,13 +80,6 @@ CustroEngine::~CustroEngine()
     GameObject::CustroEngineInstance = nullptr;
 }
 
-void CustroEngine::Lunch()
-{
-    PreStart();
-    Start();
-    Update();
-}
-
 void CustroEngine::SetCurrentScene(Scene* Scene)
 {
     currentScene = Scene;
@@ -145,6 +138,12 @@ void CustroEngine::Quit()
     glfwSetWindowShouldClose(Instance->window, true);
 }
 
+void CustroEngine::Lunch()
+{
+    PreStart();
+    Update();
+}
+
 void CustroEngine::PreStart()
 {
     
@@ -155,11 +154,13 @@ void CustroEngine::Start()
     if (!currentScene)
         return;
     
-    for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
-    {
-        currentScene->GetGameObjects()[i]->StartEngineClass();
-    }
+    const std::vector<GameObject*>& PendingGameObjects = currentScene->GetPendingGameObjects();
     
+    for (int i = 0; i < PendingGameObjects.size(); ++i)
+    {
+        PendingGameObjects[i]->StartEngineClass();
+    }
+    currentScene->MovePendingGOToAlive();   
 }
 
 void CustroEngine::Update()
@@ -197,9 +198,23 @@ void CustroEngine::Update()
             std::cout << "Heap used: " << memState.lSizes[_NORMAL_BLOCK] << " bytes" << std::endl;
         }
         
-        for (int i = 0; i < currentScene->GetGameObjects().size(); ++i)
+        
+        //GameObject Destroyed
+        if (!currentScene->PendingGameObjects.empty())
+            DestroyGameObjects(currentScene->PendingGameObjects);
+        
+        DestroyGameObjects(currentScene->AliveGameObjects);
+        
+        //GameObject Spawned
+        Start();
+        
+        //GameObject Alive
+        const std::vector<GameObject*>& AliveGameObjects = currentScene->GetAliveGameObjects();
+        
+        for (int i = 0; i < AliveGameObjects.size(); ++i)
         {
-            currentScene->GetGameObjects()[i]->Update(deltaTime);
+            if (AliveGameObjects[i]->IsActive())
+                AliveGameObjects[i]->Update(deltaTime);
         }
         
         Input::ResetDeltas();
@@ -217,5 +232,18 @@ void CustroEngine::Update()
     
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+void CustroEngine::DestroyGameObjects(std::vector<GameObject*>& GameObjects)
+{
+    auto it_fin_valide = std::remove_if(GameObjects.begin(), GameObjects.end(), [](GameObject* go) {
+        if(!go->isDestroyNextFrame)
+            return false;
+
+        delete go;
+        return true;
+    });
+    
+    GameObjects.erase(it_fin_valide, GameObjects.end());
 }
 

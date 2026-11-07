@@ -175,6 +175,7 @@ void CustroEngine::Update()
     float seconds = 0.f;
     int CountFPS = 0;
     int FPS = 0;
+    float MSpF = 0.f;
     
     while (!glfwWindowShouldClose(window))
     {
@@ -190,9 +191,11 @@ void CustroEngine::Update()
         if (seconds >= 1.0f)
         {
             FPS = CountFPS;
+            MSpF = 1000.f/(float)FPS;
             CountFPS = 0;
             seconds = 0.f;
             std::cout << " FPS : " + std::to_string(FPS) << std::endl;
+            std::cout << " MS : " + std::to_string(MSpF) << std::endl;
             _CrtMemState memState;
             _CrtMemCheckpoint(&memState);
             std::cout << "Heap used: " << memState.lSizes[_NORMAL_BLOCK] << " bytes" << std::endl;

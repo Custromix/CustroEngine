@@ -44,6 +44,7 @@ void Mesh::Draw()
 {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, totalDrawingVertices, GL_UNSIGNED_INT, 0);
+    //glDrawElementsInstanced(GL_TRIANGLES, totalDrawingVertices, GL_UNSIGNED_INT, 0, 1);
     glBindVertexArray(0);
 }
 

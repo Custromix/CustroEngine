@@ -40,6 +40,7 @@ public:
 	uint32 GetProgramID() const {	return ProgramID;	}
 	
 	const std::vector<MeshComponent*>& GetMeshComponents() const { return MeshComponents; }
+	const std::vector<std::vector<MeshComponent*>>& GetMeshes() const { return Meshes; }
 	
 	static Shader* GetShaderByName(const String name);
 	
@@ -50,6 +51,7 @@ private:
 	uint32 ProgramID;
 	
 	std::vector<MeshComponent*> MeshComponents;
+	std::vector<std::vector<MeshComponent*>> Meshes;
 	
 	static std::map<const String, Shader*> AllShadersMap;
 };

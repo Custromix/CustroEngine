@@ -229,7 +229,7 @@ int main() {
     CustroEngine* Engine = new CustroEngine();
     
     Engine->ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
-    Engine->ImportShader("D:/Pro/Others/CustroEngine/CustroEngine/src/DefaultShader.glsl", "DefaultShader");
+    Engine->ImportShader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shaders/DefaultShader.glsl", "DefaultShader");
     Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/container.jpg");
     Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/awesomeface.png", "awesomeface");
     Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/herbe.jpg", "herbe");

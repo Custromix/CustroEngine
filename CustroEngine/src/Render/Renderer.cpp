@@ -17,8 +17,8 @@ void Renderer::Init()
     glfwSwapInterval(0);
     glEnable(GL_DEPTH_TEST);
     
-    VertexShader = new Shader("D:/Professional/Other/CustroEngine/CustroEngine/src/Render/Shaders/vertexShader.glsl", "VertexShader", 0);
-    FragmentShader = new Shader("D:/Professional/Other/CustroEngine/CustroEngine/src/Render/Shaders/fragmentShader.glsl", "FragmentShader", 0);
+    VertexShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Render/Shaders/vertexShader.glsl", "VertexShader", 0);
+    FragmentShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Render/Shaders/fragmentShader.glsl", "FragmentShader", 0);
     
     UpdateProjectionMatrix(CustroEngine::FOV, CustroEngine::WINDOW_WIDTH, CustroEngine::WINDOW_HEIGHT);
 }
@@ -135,7 +135,8 @@ void Renderer::Render()
     for (Shader* Shader : Shaders)
     {
         glUseProgram(Shader->GetProgramID());
-
+        Shader->setMatrix4("view", view);
+        Shader->setMatrix4("projection", projection);
         for (MeshComponent* MeshComp : Shader->GetMeshComponents())
         {
             if (!MeshComp->IsActive())
@@ -148,33 +149,9 @@ void Renderer::Render()
             }
             
             Shader->setMatrix4("model", MeshComp->GetWorldTransform().GetModel());
-            Shader->setMatrix4("view", view);
-            Shader->setMatrix4("projection", projection);
             
             MeshComp->GetMesh()->Draw();
         }
         
     }
-    
-/*
-    for (int iMesh = 0; iMesh < MeshComponents.size(); ++iMesh)
-    {
-        if (!MeshComponents[iMesh])
-            return;
-        
-        glUseProgram(MeshComponents[iMesh]->GetMaterial().GetShader().ProgramID);
-
-        for (uint32 iTexture = 0; iTexture < MeshComponents[iMesh]->GetMaterial().GetShader().GetTextures().size(); ++iTexture)
-        {
-            glActiveTexture(GL_TEXTURE0 + iTexture);
-            glBindTexture(GL_TEXTURE_2D, MeshComponents[iMesh]->GetMaterial().GetShader().GetTextures()[iTexture]->GetID());
-        }
-        
-        MeshComponents[iMesh]->GetMaterial().GetShader().setMatrix4("model", MeshComponents[iMesh]->GetWorldTransform().GetModel());
-        MeshComponents[iMesh]->GetMaterial().GetShader().setMatrix4("view", view);
-        MeshComponents[iMesh]->GetMaterial().GetShader().setMatrix4("projection", projection);
-        
-        MeshComponents[iMesh]->GetMesh()->Draw();
-    }
-    */
 }

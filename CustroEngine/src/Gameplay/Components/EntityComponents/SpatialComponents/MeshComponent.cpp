@@ -22,3 +22,9 @@ void MeshComponent::SetMaterial(Material importedMaterial)
     usableMaterial = importedMaterial;
     usableMaterial.GetShader().Subscribe(this);
 }
+
+void MeshComponent::SetActive(const bool NewActive)
+{
+    SpatialComponent::SetActive(NewActive);
+    NewActive ? usableMaterial.GetShader().Subscribe(this) : usableMaterial.GetShader().UnSubscribe(this);
+}

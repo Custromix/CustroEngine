@@ -13,9 +13,10 @@ public:
     void SetMesh(Mesh* importedMesh) { usableMesh = importedMesh; }
     void SetMaterial(Material importedMaterial);
     
-    
     Mesh* GetMesh() { return usableMesh; }
     Material& GetMaterial() { return usableMaterial; }
+    
+    void SetActive(const bool NewActive) override;
 
 private:
     Mesh* usableMesh = nullptr;

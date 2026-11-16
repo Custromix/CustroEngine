@@ -35,7 +35,10 @@ CustroEngine::CustroEngine()
     Input::Init(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     
     Renderer::Get().Init();
-
+    
+    ImportShader(ENGINE_ROOT "/Render/Shaders/defaultShader.glsl", "DefaultShader");
+    CreateMaterialFromShader("DefaultShader", "DefaultMaterial");
+    
     glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
         glViewport(0, 0, width, height);
         Renderer::Get().UpdateProjectionMatrix(FOV, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -60,16 +63,16 @@ CustroEngine::~CustroEngine()
         GarbagedMeshes[i] = nullptr;
     }
     
-    for (int i = 0; i < GarbagedShaders.size(); ++i)
-    {
-        delete GarbagedShaders[i];
-        GarbagedShaders[i] = nullptr;
-    }
-    
     for (int i = 0; i < GarbagedMaterials.size(); ++i)
     {
         delete GarbagedMaterials[i];
         GarbagedMaterials[i] = nullptr;
+    }
+    
+    for (int i = 0; i < GarbagedShaders.size(); ++i)
+    {
+        delete GarbagedShaders[i];
+        GarbagedShaders[i] = nullptr;
     }
     
     currentScene = nullptr;
@@ -85,20 +88,18 @@ void CustroEngine::SetCurrentScene(Scene* Scene)
     currentScene = Scene;
 }
 
-/*Mesh* CustroEngine::ImportMesh(char path, const char* MeshName)
-{
-
-    
-    GarbagedMeshes.push_back(new Mesh(vertices, MeshName));
-    return GarbagedMeshes.back();
-}*/
-
 //TODO: Supprimer cette fonction quand on aura fait le parser
 Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String MeshName)
 {
     GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, uv, uvSize, normals, normalsSize, indices, indicesSize, MeshName));
     return GarbagedMeshes.back();
 }
+
+/*Mesh* CustroEngine::ImportMesh(char path, const char* MeshName)
+{
+    GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, uv, uvSize, normals, normalsSize, indices, indicesSize, MeshName));
+    return GarbagedMeshes.back();
+}*/
 
 Shader* CustroEngine::ImportShader(const String ShaderPath, const String MeshName)
 {
@@ -123,8 +124,14 @@ Texture* CustroEngine::ImportTexture(const String TexturePath, String TextureNam
 
 Material* CustroEngine::CreateMaterialFromShader(const String ShaderName, const String MaterialName)
 {
-    GarbagedMaterials.push_back(new Material(Shader::GetShaderByName(ShaderName), MaterialName));
-    return GarbagedMaterials.back();
+    if (Shader* shader = Shader::GetShaderByName(ShaderName))
+    {
+        GarbagedMaterials.push_back(new Material(shader, MaterialName));
+        return GarbagedMaterials.back();
+    }
+    else
+        return nullptr;
+    
 }
 
 Scene* CustroEngine::CreateScene()

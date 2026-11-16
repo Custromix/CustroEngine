@@ -1,11 +1,9 @@
 #include "Shader.h"
-
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #include "Renderer.h"
-
-//#include "Gameplay/Components/EntityComponents/SpatialComponents/MeshComponent.h"
 
 std::map<const String, Shader*> Shader::AllShadersMap;
 
@@ -33,7 +31,6 @@ Shader::Shader(const String shaderPath, const String shaderName, uint32 programI
         ShaderFile.open(shaderPath.CStr());
         std::stringstream ShaderStream;
         ShaderStream << ShaderFile.rdbuf();
-        std::cout << "test";
         ShaderFile.close();
         
         ShaderCode = ShaderStream.str().c_str();
@@ -86,20 +83,29 @@ void Shader::setMatrix4(const std::string& name, glm::mat4 model)
     glUniformMatrix4fv(glGetUniformLocation(ProgramID, name.c_str()), 1, GL_FALSE, glm::value_ptr(model));
 }
 
+void Shader::setMatrix4(int32 location, glm::mat4 model)
+{
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(model));
+}
+
 void Shader::setTexture(const String& name, uint32 slot)
 {
     glUniform1i(glGetUniformLocation(ProgramID, name.CStr()), slot);
 }
 
-void Shader::Subscribe(MeshComponent* component)
+void Shader::Subscribe(Material* mat)
 {
-    MeshComponents.push_back(component);
+    if (std::find(MyMaterials.begin(), MyMaterials.end(), mat) != MyMaterials.end())
+        return;
+    
+    MyMaterials.push_back(mat);
 }
 
-void Shader::UnSubscribe(MeshComponent* component)
+void Shader::UnSubscribe(Material* mat)
 {
-    MeshComponents.erase(std::remove(MeshComponents.begin(), MeshComponents.end(), component), MeshComponents.end());
+    MyMaterials.erase(std::remove(MyMaterials.begin(), MyMaterials.end(), mat), MyMaterials.end());
 }
+
 Shader* Shader::GetShaderByName(const String name)
 {
     auto it = AllShadersMap.find(name);

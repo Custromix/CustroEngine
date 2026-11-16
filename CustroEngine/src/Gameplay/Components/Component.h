@@ -15,6 +15,8 @@ public:
 	
 	bool IsActive() const;
 	virtual void SetActive(const bool NewActive) { isActive = NewActive; }
+	virtual void OnEnable() {}
+	virtual void OnDisable() {}
 	
 protected:
 	GameObject* _Owner;

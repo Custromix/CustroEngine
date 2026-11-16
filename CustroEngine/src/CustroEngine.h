@@ -31,6 +31,8 @@ public:
     
     Scene* CreateScene();
     
+    static CustroEngine& GetEngine() { return *Instance; }
+    
     static void Quit();
     
 private:

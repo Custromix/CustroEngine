@@ -11,7 +11,7 @@
 #include "types.hpp"
 #include "utils/String.h"
 
-class MeshComponent;
+class Material;
 
 using namespace Engine;
 
@@ -29,18 +29,18 @@ public:
 	void setVector3(const std::string& name, float x, float y, float z);
 	void setVector3(const std::string& name, glm::vec3 vec3);
 	void setMatrix4(const std::string& name, glm::mat4 model);
+	void setMatrix4(int32 location, glm::mat4 model);
 	
 	void setTexture(const String& name, uint32 slot);
 	
-	void Subscribe(MeshComponent* component);
-	void UnSubscribe(MeshComponent* component);
+	void Subscribe(Material* mat);
+	void UnSubscribe(Material* mat);
 	
 	String GetShaderCode()		{	return ShaderCode;	}
 	String GetName()			{	return Name;		}
 	uint32 GetProgramID() const {	return ProgramID;	}
 	
-	const std::vector<MeshComponent*>& GetMeshComponents() const { return MeshComponents; }
-	const std::vector<std::vector<MeshComponent*>>& GetMeshes() const { return Meshes; }
+	const std::vector<Material*>& GetMyMaterials() const { return MyMaterials; }
 	
 	static Shader* GetShaderByName(const String name);
 	
@@ -50,8 +50,7 @@ private:
 	String Name;
 	uint32 ProgramID;
 	
-	std::vector<MeshComponent*> MeshComponents;
-	std::vector<std::vector<MeshComponent*>> Meshes;
+	std::vector<Material*> MyMaterials;
 	
 	static std::map<const String, Shader*> AllShadersMap;
 };

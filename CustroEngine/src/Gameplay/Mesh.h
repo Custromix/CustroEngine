@@ -17,7 +17,15 @@ public:
     
     static Mesh* GetMeshByName(const String MeshName);
     
+    uint32 GetID() const { return MeshID; }
+    
+    uint32 GetTotalDrawingVertices() const { return totalDrawingVertices; }
+    
     void Draw();
+    
+    void ConfigureVAO(uint32 VAO);
+    
+    uint32 GetVAO() { return VAO; }
     
 private:
     void ParseVertices(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normal[], size_t normalSize);
@@ -26,12 +34,15 @@ private:
     void CheckGLError(const char* location);
 
 private:
+    static uint32 NbMeshes;
     
-    unsigned int VAO = 0;
+    uint32 MeshID;
     
-    unsigned int VBO = 0;
+    uint32 VAO = 0;
     
-    unsigned int EBO = 0;
+    uint32 VBO = 0;
+    
+    uint32 EBO = 0;
     
     String MeshName;
     

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 project(CustroEngine)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -7,8 +7,8 @@ include_directories(libs/glfw/include)
 include_directories(libs/glad/include)
 include_directories(CustroEngine/src)
 
-file(GLOB_RECURSE ALL_FILES
-        "CustroEngine/src/*"
+file(GLOB_RECURSE ALL_FILES CONFIGURE_DEPENDS
+        "CustroEngine/*"
 )
 
 add_executable(CustroEngine
@@ -20,6 +20,11 @@ target_link_libraries(CustroEngine
         ${CMAKE_SOURCE_DIR}/libs/glfw/lib/glfw3.lib
         opengl32
         gdi32
+)
+
+target_compile_definitions(CustroEngine PRIVATE
+        ENGINE_ROOT="${CMAKE_SOURCE_DIR}/CustroEngine/src"
+        GAME_PATH="${CMAKE_SOURCE_DIR}/CustroEngine/GameProject"
 )
 
 target_include_directories(CustroEngine PRIVATE libs)

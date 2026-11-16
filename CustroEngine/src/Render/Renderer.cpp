@@ -17,8 +17,8 @@ void Renderer::Init()
     glfwSwapInterval(0);
     glEnable(GL_DEPTH_TEST);
     
-    VertexShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Render/Shaders/vertexShader.glsl", "VertexShader", 0);
-    FragmentShader = new Shader("D:/Pro/Others/CustroEngine/CustroEngine/src/Render/Shaders/fragmentShader.glsl", "FragmentShader", 0);
+    VertexShader = new Shader(ENGINE_ROOT "/Render/Shaders/vertexShader.glsl", "VertexShader", 0);
+    FragmentShader = new Shader(ENGINE_ROOT "/Render/Shaders/fragmentShader.glsl", "FragmentShader", 0);
     
     UpdateProjectionMatrix(CustroEngine::FOV, CustroEngine::WINDOW_WIDTH, CustroEngine::WINDOW_HEIGHT);
 }
@@ -39,7 +39,6 @@ Shader* Renderer::CreateShader(const String ShaderPath, const String MeshName)
     
     uint32 VertexShaderID = CreateShaderPass(GL_VERTEX_SHADER, VertexShader->GetShaderCode().CStr());
     uint32 FragmentShaderID = CreateShaderPass(GL_FRAGMENT_SHADER, FragmentShader->GetShaderCode().CStr(), MeshShader->GetShaderCode().CStr());
-    
     
     glAttachShader(ProgramId, VertexShaderID);
     glAttachShader(ProgramId, FragmentShaderID);
@@ -128,29 +127,37 @@ void Renderer::UpdateViewMatrix()
 
 void Renderer::Render()
 {
-    Transform CameraTransform = CameraSystem::Get().GetActiveCamera()->GetWorldTransform();
+    Transform& CameraTransform = CameraSystem::Get().GetActiveCamera()->GetTransform();
     
-    view = glm::lookAt(CameraTransform.GetPosition(), CameraTransform.GetPosition() + CameraTransform.GetForward(), CameraSystem::Get().GetActiveCamera()->cameraUp);
+    view = glm::lookAt(CameraTransform.GetWorldPosition(), CameraTransform.GetWorldPosition() + CameraTransform.GetWorldForward(), CameraSystem::Get().GetActiveCamera()->cameraUp);
 
     for (Shader* Shader : Shaders)
     {
         glUseProgram(Shader->GetProgramID());
         Shader->setMatrix4("view", view);
         Shader->setMatrix4("projection", projection);
-        for (MeshComponent* MeshComp : Shader->GetMeshComponents())
+        
+        for (auto* Mat : Shader->GetMyMaterials())
         {
-            if (!MeshComp->IsActive())
-                continue;
-            
-            for (uint32 iTexture = 0; iTexture < MeshComp->GetMaterial().GetTextures().size(); ++iTexture)
+            for (uint32 iTexture = 0; iTexture < Mat->GetTextures().size(); ++iTexture)
             {
                 glActiveTexture(GL_TEXTURE0 + iTexture);
-                glBindTexture(GL_TEXTURE_2D, MeshComp->GetMaterial().GetTextures()[iTexture]->GetID());
+                glBindTexture(GL_TEXTURE_2D, Mat->GetTextures()[iTexture]->GetID());
             }
-            
-            Shader->setMatrix4("model", MeshComp->GetWorldTransform().GetModel());
-            
-            MeshComp->GetMesh()->Draw();
+
+            for (auto& MGroup : Mat->GetMeshes())
+            {
+                if (MGroup.IsBufferSizeChanged)
+                    MGroup.SetAllInstanceBuffer();
+                
+                if (MGroup.needRefresh)
+                    MGroup.RefreshInstanceMinMaxZoneInOnceBuffer(MGroup.MinIndexToRefresh, MGroup.MaxIndexToRefresh);
+                
+                glBindVertexArray(MGroup.VAO);
+                glDrawElementsInstanced(GL_TRIANGLES, MGroup.NbVertices, GL_UNSIGNED_INT, 0, MGroup.Models.size());
+                
+                glBindVertexArray(0);
+            }
         }
         
     }

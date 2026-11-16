@@ -4,26 +4,15 @@
 
 SpatialComponent::SpatialComponent()
 {
-    LocalTransform.SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    LocalTransform.SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-    LocalTransform.SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+    ComponentTransform.OnChanged = [this]() { OnTransformChanged(); };
 }
 
 SpatialComponent::~SpatialComponent()
 {
 }
 
-Transform SpatialComponent::GetWorldTransform()
+void SpatialComponent::SetOwner(GameObject* owner)
 {
-    if (!Owner())
-        return LocalTransform;
-    
-    Transform* parentTransform = Owner()->GetTransform();
-    
-    Transform World;
-    World.SetPosition(parentTransform->GetPosition() + LocalTransform.GetPosition());
-    World.SetRotation(parentTransform->GetRotation() + LocalTransform.GetRotation());
-    World.SetScale(parentTransform->GetScale() * LocalTransform.GetScale());
-    
-    return World;
+    EntityComponent::SetOwner(owner);
+    ComponentTransform.SetParent(_EntityOwner->GetTransform());
 }

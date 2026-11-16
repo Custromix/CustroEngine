@@ -3,7 +3,9 @@
 void Entity::Construct(const glm::vec3 Position, const glm::vec3 Rotation, const glm::vec3 Scale)
 {
     GameObject::Construct();
-    transform = Transform(Position, Rotation, Scale);
+    transform.SetWorldPosition(Position);
+    transform.SetWorldRotation(Rotation);
+    transform.SetWorldScale(Scale);
 }
 
 Entity::Entity()

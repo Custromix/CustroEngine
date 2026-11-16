@@ -5,6 +5,8 @@
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
+#include <filesystem>
+
 #include "CameraSystem.h"
 #include "CustroEngine.h"
 #include "Gameplay/Entity.h"
@@ -50,8 +52,6 @@ public:
 class ObjectQuelconque : public Entity
 {
 public:
-    Texture* aTexture;
-    
     MeshComponent* MeshComp;
     BasicSystem* BasicSystemComp;
     
@@ -60,7 +60,9 @@ public:
     
     float MovementSpeed = 2.0f;
     
-    glm::vec3 Position = GetTransform()->GetPosition();
+    glm::vec3 Position = GetTransform()->GetWorldPosition();
+    
+    bool OtherMat = false;
     
 public:
     ObjectQuelconque()
@@ -76,8 +78,10 @@ public:
     void Start() override
     {
         MeshComp->SetMesh(Mesh::GetMeshByName("Cube"));
-        MeshComp->SetMaterial(*Material::GetMaterialByName("DefaultMaterial"));
-        MeshComp->GetMaterial().SetTexture(aTexture, "aTexture");
+        if (OtherMat)
+            MeshComp->SetMaterial(*Material::GetMaterialByName("TextureMaterial2"));
+        else    
+            MeshComp->SetMaterial(*Material::GetMaterialByName("TextureMaterial"));
         
         std::cout << "Le mesh est : " << MeshComp->GetMesh()->GetMeshName() << std::endl;
     }
@@ -94,8 +98,8 @@ class Player : public Entity
 {
     CameraComponent* Camera;
     
-    glm::vec3 Position = GetTransform()->GetPosition();
-    glm::vec3 Rotation = GetTransform()->GetRotation();
+    glm::vec3 Position = GetTransform()->GetWorldPosition();
+    glm::vec3 Rotation = GetTransform()->GetWorldRotation();
     
     float MovementSpeed = 15.0f;
     
@@ -113,15 +117,17 @@ public:
     
     void Start() override
     {
+        GetTransform()->SetWorldPosition({-13.43,18.25,12.82});
+        GetTransform()->SetWorldRotation({-10.99, 673.45, 0.0});
     }
     
     void Update(float deltaTime) override
     {
-        Position = GetTransform()->GetPosition();
-        Rotation = GetTransform()->GetRotation();
-        glm::vec3 forward = GetTransform()->GetForward();
-        glm::vec3 right = GetTransform()->GetRight();
-        glm::vec3 up = GetTransform()->GetUp();
+        Position = GetTransform()->GetWorldPosition();
+        Rotation = GetTransform()->GetWorldRotation();
+        glm::vec3 forward = GetTransform()->GetWorldForward();
+        glm::vec3 right = GetTransform()->GetWorldRight();
+        glm::vec3 up = GetTransform()->GetWorldUp();
         
         //std::cout << forward.x << " " << forward.y << " " << forward.z << std::endl;
         
@@ -145,7 +151,7 @@ public:
         float mouseY = Input::GetDeltaY();
         
        
-        //std::cout << "XPOS => " << xpos << "YPOS => " << ypos << std::endl;
+        //std::cout << "XPOS => " << Rotation.x << "YPOS => " << Rotation.y << "ZPOS => " << Rotation.z << std::endl;
         
         if (mouseX != 0.0f)
             Rotation += glm::vec3(0,1,0) * mouseX * Sensitivity * deltaTime;
@@ -157,8 +163,8 @@ public:
         if(Rotation.x < -89.0f)
             Rotation.x = -89.0f;
         
-        GetTransform()->SetRotation(Rotation);
-        GetTransform()->SetPosition(Position);
+        GetTransform()->SetWorldRotation(Rotation);
+        GetTransform()->SetWorldPosition(Position);
     }
     
 };
@@ -226,34 +232,37 @@ int main() {
     
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     
-    CustroEngine* Engine = new CustroEngine();
+    CustroEngine Engine = CustroEngine();
     
-    Engine->ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
-    Engine->ImportShader("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/Shaders/DefaultShader.glsl", "DefaultShader");
-    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/container.jpg");
-    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/awesomeface.png", "awesomeface");
-    Engine->ImportTexture("D:/Pro/Others/CustroEngine/CustroEngine/src/assets/herbe.jpg", "herbe");
+    Engine.ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
+    Engine.ImportShader(GAME_PATH "/assets/Shaders/TextureShader.glsl", "TextureShader");
+    Engine.ImportShader(GAME_PATH "/assets/Shaders/TextureShader.glsl", "TextureShader2");
+    Texture* ContainerTexture = Engine.ImportTexture(GAME_PATH "/assets/container.jpg");
+    Texture* AwasomeTexture = Engine.ImportTexture(GAME_PATH "/assets/awesomeface.png", "awesomeface");
+    Texture* HerbeTexture = Engine.ImportTexture(GAME_PATH "/assets/herbe.jpg", "herbe");
     
+    Material* MaterialAvecTexture = Engine.CreateMaterialFromShader("TextureShader", "TextureMaterial");
+    Material* MaterialAvecTexture2 = Engine.CreateMaterialFromShader("TextureShader2", "TextureMaterial2");
+    MaterialAvecTexture->SetTexture(HerbeTexture, "aTexture");
+    MaterialAvecTexture2->SetTexture(ContainerTexture, "aTexture");
     
-    Engine->CreateMaterialFromShader("DefaultShader", "DefaultMaterial");
+    Scene* MyScene = Engine.CreateScene();
     
-    
-    Scene* MyScene = Engine->CreateScene();
-    
-    Engine->SetCurrentScene(MyScene);
+    Engine.SetCurrentScene(MyScene);
     
     GameManager* MyGameManager = MyScene->Spawn<class GameManager>();
     
     Player* MyPlayer = MyScene->Spawn<class Player>(glm::vec3(0.0f, 0.0f, -3.0f));
-
-    int floorSize[2] = {20, 20};
+    
+    int floorSize[2] = {100, 100};
     
     for (int i = 0; i < floorSize[0]; ++i)
     {
         for (int j = 0; j < floorSize[1]; ++j)
         {
             ObjectQuelconque* Floor = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(1.f * i, 1.f, -1.f * j));
-            Floor->aTexture = Texture::GetTextureByName("herbe");
+            //if (i > 30 && i < 70)
+                //Floor->OtherMat = true;
         }
     }
     
@@ -261,9 +270,7 @@ int main() {
     
     // Code du jeu
 
-    Engine->Lunch();
-    
-    delete Engine;
+    Engine.Lunch();
     
     
     return 0;

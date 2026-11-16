@@ -3,7 +3,7 @@
 CameraSystem::CameraSystem()
 {
     DefaultCamera = new CameraComponent();
-    DefaultCamera->GetWorldTransform().SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    DefaultCamera->GetTransform().SetWorldPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     SetActiveCamera(DefaultCamera);
 }
 

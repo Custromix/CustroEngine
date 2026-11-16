@@ -2,7 +2,7 @@
 //UNLIT
 
 in vec2 TextureCoordinate;
-in vec2 Normals;
+in vec3 Normals;
 
 out vec4 BaseColor;
 

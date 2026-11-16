@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+
+#include "types.hpp"
 #include "Components/Component.h"
 #include "utils/String.h"
 
@@ -26,7 +28,7 @@ public:
     void Destroy();
     
     bool IsActive() const { return isActive && !isDestroyNextFrame; }
-    void SetActive(const bool NewActive) { isActive = NewActive; }
+    void SetActive(const bool NewActive);
     
 protected:
     virtual void Construct();
@@ -55,7 +57,7 @@ private:
     
     bool isDestroyNextFrame = false;
     
-    static int64_t GameObjectCounter;
+    static uint64 GameObjectCounter;
     
     bool isActive = true;
 };

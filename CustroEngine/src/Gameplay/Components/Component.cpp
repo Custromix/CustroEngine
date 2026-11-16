@@ -12,5 +12,5 @@ Component::~Component()
 
 bool Component::IsActive() const
 {
-    return isActive && (Owner() ? Owner()->IsActive() : true);
+    return isActive && (Owner() ? Owner()->IsActive() : false);
 }

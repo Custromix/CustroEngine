@@ -6,10 +6,13 @@
 
 #include "Render/Vertex.h"
 
+uint32 Mesh::NbMeshes = 0;
 std::map<const String, Mesh*> Mesh::AllMeshesMap;
 
 Mesh::Mesh(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String NewMeshName)
 {
+    NbMeshes++;
+    MeshID = NbMeshes;
     MeshName = NewMeshName;
     verticesCount = verticesSize/(sizeof(float)*3);
     totalDrawingVertices = indicesSize/sizeof(uint32);
@@ -44,8 +47,37 @@ void Mesh::Draw()
 {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, totalDrawingVertices, GL_UNSIGNED_INT, 0);
-    //glDrawElementsInstanced(GL_TRIANGLES, totalDrawingVertices, GL_UNSIGNED_INT, 0, 1);
     glBindVertexArray(0);
+}
+
+void Mesh::ConfigureVAO(uint32 vao)
+{
+    glBindVertexArray(vao);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    
+    //Vertices
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    glEnableVertexAttribArray(0); // Active layout 0
+    
+    if (hasUV)
+    {
+        //UVs
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+        glEnableVertexAttribArray(1); // Active layout 1 
+    }
+    
+    if (hasNormals)
+    {
+        //Normal
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+        glEnableVertexAttribArray(2); // Active layout 2
+    }
+    
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Mesh::ParseVertices(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normal[], size_t normalSize)
@@ -101,30 +133,8 @@ void Mesh::ImportMesh(uint32 indices[], size_t indicesSize)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER,  sizeof(Vertex) * Vertices.size(),  Vertices.data(), GL_STATIC_DRAW);
     
-    //Vertices
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
-    glEnableVertexAttribArray(0); // Active layout 0
-    
-    if (hasUV)
-    {
-        //UVs
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
-        glEnableVertexAttribArray(1); // Active layout 1 
-    }
-    
-    if (hasNormals)
-    {
-        //Normal
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-        glEnableVertexAttribArray(2); // Active layout 2
-    }
-    
-    
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    ConfigureVAO(VAO);
 }
-
 
 // Appelle cette fonction après chaque appel OpenGL important
 void Mesh::CheckGLError(const char* location)

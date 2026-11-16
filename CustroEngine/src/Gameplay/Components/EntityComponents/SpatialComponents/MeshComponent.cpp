@@ -1,30 +1,51 @@
 #include "MeshComponent.h"
 
-#include "Render/Renderer.h"
-
-MeshComponent::MeshComponent() : usableMaterial(new Shader(), "")
+MeshComponent::MeshComponent()
 {
-    usableMaterial.GetShader().Subscribe(this);
+    Material* DefaultMaterial = Material::GetMaterialByName("DefaultMaterial");
+    usableMaterial = DefaultMaterial;
 }
 
 MeshComponent::~MeshComponent()
 {
-    usableMaterial.GetShader().UnSubscribe(this);
+    usableMaterial->UnSubscribe(this);
     
     usableMesh = nullptr;
-    //usableShader = nullptr;
+    usableMaterial = nullptr;
     _Owner = nullptr;
 }
 
-void MeshComponent::SetMaterial(Material importedMaterial)
+void MeshComponent::SetMesh(Mesh* importedMesh)
 {
-    usableMaterial.GetShader().UnSubscribe(this);
-    usableMaterial = importedMaterial;
-    usableMaterial.GetShader().Subscribe(this);
+    usableMesh = importedMesh;
+    usableMaterial->RefreshGroup(this);
+}
+
+void MeshComponent::SetMaterial(Material& importedMaterial)
+{
+    usableMaterial->UnSubscribe(this);
+    usableMaterial = &importedMaterial;
+    usableMaterial->Subscribe(this);
 }
 
 void MeshComponent::SetActive(const bool NewActive)
 {
     SpatialComponent::SetActive(NewActive);
-    NewActive ? usableMaterial.GetShader().Subscribe(this) : usableMaterial.GetShader().UnSubscribe(this);
+    NewActive ? usableMaterial->RefreshGroup(this) : usableMaterial->UnSubscribe(this);
+}
+
+void MeshComponent::OnEnable()
+{
+    usableMaterial->RefreshGroup(this);
+}
+
+void MeshComponent::OnDisable()
+{
+    usableMaterial->UnSubscribe(this);
+}
+
+void MeshComponent::OnTransformChanged()
+{
+    if (usableMaterial)
+        usableMaterial->OnComponentChanged(this);
 }

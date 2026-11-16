@@ -7,10 +7,28 @@
 #include "types.hpp"
 
 CustroEngine* GameObject::CustroEngineInstance = nullptr;
-int64_t GameObject::GameObjectCounter = 0;
+uint64 GameObject::GameObjectCounter = 0;
 GameObject::GameObject()
 {
     GameObjectCounter++;
+}
+
+void GameObject::SetActive(const bool NewActive)
+{
+    isActive = NewActive;
+    if (isActive)
+    {
+        for (Component* comp : Components)
+        {
+            comp->OnEnable();
+        }
+    }else
+    {
+        for (Component* comp : Components)
+        {
+            comp->OnDisable();
+        }
+    }
 }
 
 void GameObject::Construct()

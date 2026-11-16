@@ -8,8 +8,12 @@ public:
     SpatialComponent();
     virtual ~SpatialComponent() override = 0;
     
-    Transform GetWorldTransform();
+    void SetOwner(GameObject* owner) final;
 
+    virtual void OnTransformChanged() {}
+    
+    Transform& GetTransform() { return ComponentTransform; }
+    
 protected:
-    Transform LocalTransform;
+    Transform ComponentTransform;
 };

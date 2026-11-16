@@ -10,10 +10,10 @@ public:
     EntityComponent();
     virtual ~EntityComponent() override = 0;
     
-    void SetOwner(GameObject* owner) final;
+    void SetOwner(GameObject* owner) override;
     Entity* Owner() const { return _EntityOwner; }
     
-private:
+protected:
     Entity* _EntityOwner = nullptr;
     
 };

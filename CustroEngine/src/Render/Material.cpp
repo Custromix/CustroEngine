@@ -38,6 +38,7 @@ MeshGroup::MeshGroup(MeshComponent* FirstMeshComponent)
     NbVertices = mesh->GetTotalDrawingVertices();
 
     MeshComponents.push_back(FirstMeshComponent);
+    FirstMeshComponent->indexInGroup = MeshComponents.size() - 1;
     IsBufferSizeChanged = true;
 }
 
@@ -93,15 +94,26 @@ MeshGroup& MeshGroup::operator=(MeshGroup&& other) noexcept
 void MeshGroup::AddMeshComponent(MeshComponent* component)
 {
     MeshComponents.push_back(component);
+    component->indexInGroup = MeshComponents.size() - 1;
     IsBufferSizeChanged = true;
 }
 
 void MeshGroup::RemoveMeshComponent(MeshComponent* component)
 {
-    uint32 size = MeshComponents.size();
-    MeshComponents.erase(std::remove(MeshComponents.begin(), MeshComponents.end(), component), MeshComponents.end());
-    if (size != MeshComponents.size())
-        IsBufferSizeChanged = true;
+    uint32 indexToSwap = component->indexInGroup;
+    
+    if (indexToSwap >= MeshComponents.size())
+        return;
+
+    if (MeshComponents[indexToSwap] != component)
+        return;
+    
+    MeshComponents[indexToSwap] = MeshComponents.back();
+    MeshComponents[indexToSwap]->indexInGroup = indexToSwap;
+    MeshComponents.pop_back();
+    component->indexInGroup = -1;
+    
+    IsBufferSizeChanged = true;
 }
 
 void MeshGroup::SetNewMeshComponentToRefresh(MeshComponent* component)
@@ -109,19 +121,15 @@ void MeshGroup::SetNewMeshComponentToRefresh(MeshComponent* component)
     if (!component)
         return;
     
-    MinIndexToRefresh = -1;
-    MaxIndexToRefresh = 0;
+    uint32 index = component->indexInGroup;
+    if (index == -1)
+        return;
     
-    auto it = std::find(MeshComponents.begin(), MeshComponents.end(), component);
-    if (it != MeshComponents.end())
-    {
-        size_t index = it - MeshComponents.begin();
-        if (index < MinIndexToRefresh)
-            MinIndexToRefresh = index;
-        if (index > MaxIndexToRefresh)
-            MaxIndexToRefresh = index;
-        needRefresh = true;
-    }
+    if (index < MinIndexToRefresh)
+        MinIndexToRefresh = index;
+    if (index > MaxIndexToRefresh)
+        MaxIndexToRefresh = index;
+    needRefresh = true;
 }
 
 void MeshGroup::SetAllInstanceBuffer()

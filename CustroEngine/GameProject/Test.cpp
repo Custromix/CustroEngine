@@ -64,6 +64,8 @@ public:
     
     bool OtherMat = false;
     
+    bool isRotating = false;
+    
 public:
     ObjectQuelconque()
     {
@@ -88,9 +90,11 @@ public:
     
     void Update(float deltaTime) override
     {
-        /*Position = GetTransform()->GetPosition();
+        if (!isRotating)
+            return;
+        
         Angle += AngleSpeed * deltaTime;
-        GetTransform()->SetRotation(glm::vec3(Angle, Angle*0.8, 0.0f));*/
+        GetTransform()->SetWorldRotation(glm::vec3(Angle, Angle*0.8, 0.0f));
     }
 };
 
@@ -261,8 +265,8 @@ int main() {
         for (int j = 0; j < floorSize[1]; ++j)
         {
             ObjectQuelconque* Floor = MyScene->Spawn<class ObjectQuelconque>(glm::vec3(1.f * i, 1.f, -1.f * j));
-            //if (i > 30 && i < 70)
-                //Floor->OtherMat = true;
+            //if (i == 0 && j == 0)
+            Floor->isRotating = true;
         }
     }
     

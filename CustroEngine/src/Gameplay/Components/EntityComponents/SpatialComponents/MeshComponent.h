@@ -22,6 +22,9 @@ public:
     void OnDisable() override;
     
     void OnTransformChanged() override;
+    
+public:
+    uint32 indexInGroup = -1;
 
 private:
     Mesh* usableMesh = nullptr;

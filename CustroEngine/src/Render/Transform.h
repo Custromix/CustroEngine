@@ -48,6 +48,7 @@ public:
     
     void AddChild(Transform* child) { Childs.push_back(child); }
     void RemoveChild(Transform* child);
+    Transform* GetParent() const { return Parent; }
     void SetParent(Transform* parent);
     
     std::function<void()> OnChanged;

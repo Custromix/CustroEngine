@@ -6,11 +6,17 @@
 
 using namespace Engine;
 
+struct MeshData
+{
+    std::vector<Vertex> Vertices;
+    std::vector<uint32> Indices;
+};
+
 class Mesh
 {
     
 public:
-    Mesh(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String NewMeshName);
+    Mesh(const MeshData& NewMeshData, const String NewMeshName);
     ~Mesh();
     
     String GetMeshName() const { return MeshName; }
@@ -19,7 +25,7 @@ public:
     
     uint32 GetID() const { return MeshID; }
     
-    uint32 GetTotalDrawingVertices() const { return totalDrawingVertices; }
+    uint32 GetTotalDrawingVertices() const { return MyMeshData.Indices.size(); }
     
     void Draw();
     
@@ -28,9 +34,8 @@ public:
     uint32 GetVAO() { return VAO; }
     
 private:
-    void ParseVertices(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normal[], size_t normalSize);
     
-    void ImportMesh(uint32 indices[], size_t indicesSize);
+    void ImportMesh();
     void CheckGLError(const char* location);
 
 private:
@@ -46,19 +51,11 @@ private:
     
     String MeshName;
     
+    MeshData MyMeshData;
+    
     uint32 AllMeshesIndex;
-    
-    uint32 verticesCount;
-    
-    uint32 totalDrawingVertices;
     
     uint32 trianglesCount;
     
-    bool hasUV = false;
-    
-    bool hasNormals = false;
-    
     static std::map<const String, Mesh*> AllMeshesMap;
-    
-    std::vector<Vertex> Vertices;
 };

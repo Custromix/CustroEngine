@@ -1,6 +1,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
 #include <crtdbg.h>
+#include <windows.h>
 #ifdef _DEBUG
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
@@ -55,7 +56,7 @@ public:
     MeshComponent* MeshComp;
     BasicSystem* BasicSystemComp;
     
-    float AngleSpeed = 45.0f;
+    float AngleSpeed = 20.0f;
     float Angle = 0.0f;
     
     float MovementSpeed = 2.0f;
@@ -175,7 +176,7 @@ public:
 
 int main() {
     
-    float vertices[] = {
+    float verticesData[] = {
         // Front
         -0.5f,  0.5f,  0.5f,
          0.5f,  0.5f,  0.5f,
@@ -238,7 +239,30 @@ int main() {
     
     CustroEngine Engine = CustroEngine();
     
-    Engine.ImportMesh(vertices, sizeof(vertices), uv, sizeof(uv), nullptr, 0, indices, sizeof(indices), "Cube");
+    std::optional<MeshData> Cube = MeshData();
+    //MeshData&& Cube2 = MeshData();
+    
+    uint32 verticesCount = sizeof(verticesData) / (sizeof(float) * 3);
+    for (uint32 i = 0; i < verticesCount; ++i)
+    {
+        Vertex v;
+        v.position      = glm::vec3(verticesData[i * 3], verticesData[i * 3 + 1], verticesData[i * 3 + 2]);
+        v.uv            = glm::vec2(uv[i * 2], uv[i * 2 + 1]);
+        v.normal        = glm::vec3(0.0f, 0.0f, 0.0f); 
+                
+        /*if (normalSize > 0)
+        {
+            v.normal        = glm::vec3(normal[i * 3], normal[i * 3 + 1], normal[i * 3 + 2]);
+            hasNormals = true;
+        }*/
+        
+        Cube->Vertices.push_back(v);
+    }
+
+    Cube->Indices.assign(std::begin(indices), std::end(indices));
+    Engine.ImportMesh(*Cube, "", "Cube");
+    Cube.reset();
+    
     Engine.ImportShader(GAME_PATH "/assets/Shaders/TextureShader.glsl", "TextureShader");
     Engine.ImportShader(GAME_PATH "/assets/Shaders/TextureShader.glsl", "TextureShader2");
     Texture* ContainerTexture = Engine.ImportTexture(GAME_PATH "/assets/container.jpg");

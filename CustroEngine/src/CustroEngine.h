@@ -21,7 +21,7 @@ public:
     
     //Mesh* ImportMesh(char path, const char* MeshName);
     //TODO: Supprimer cette fonction quand on aura fait le parser
-    Mesh* ImportMesh(float* vertices, size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String MeshName);
+    Mesh* ImportMesh(MeshData& NewMeshData, const String AssetPath, const String MeshName = nullptr);
     
     Shader* ImportShader(const String ShaderPath, const String MeshName);
     

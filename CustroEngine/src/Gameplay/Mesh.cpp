@@ -9,22 +9,21 @@
 uint32 Mesh::NbMeshes = 0;
 std::map<const String, Mesh*> Mesh::AllMeshesMap;
 
-Mesh::Mesh(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String NewMeshName)
+Mesh::Mesh(const MeshData& NewMeshData, const String NewMeshName)
 {
+    MyMeshData = NewMeshData;
+    //float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize,
     NbMeshes++;
     MeshID = NbMeshes;
     MeshName = NewMeshName;
-    verticesCount = verticesSize/(sizeof(float)*3);
-    totalDrawingVertices = indicesSize/sizeof(uint32);
-    trianglesCount = indicesSize/(sizeof(uint32)*3);
+    trianglesCount = NewMeshData.Indices.size()/3;
     
-    std::cout << "verticesCount: " << verticesCount << std::endl;
+    std::cout << "verticesCount: " << MyMeshData.Vertices.size() << std::endl;
     std::cout << "indicesCount: " << trianglesCount << std::endl;
     
     AllMeshesMap[MeshName] = this;
     
-    ParseVertices(verticesData, verticesSize, uv, uvSize, normals, normalsSize);
-    ImportMesh(indices, indicesSize);
+    ImportMesh();
 }
 
 Mesh::~Mesh()
@@ -46,7 +45,7 @@ Mesh* Mesh::GetMeshByName(const String MeshName)
 void Mesh::Draw()
 {
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, totalDrawingVertices, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, GetTotalDrawingVertices(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
@@ -61,57 +60,18 @@ void Mesh::ConfigureVAO(uint32 vao)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0); // Active layout 0
     
-    if (hasUV)
-    {
-        //UVs
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
-        glEnableVertexAttribArray(1); // Active layout 1 
-    }
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+    glEnableVertexAttribArray(1); // Active layout 1 
     
-    if (hasNormals)
-    {
-        //Normal
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-        glEnableVertexAttribArray(2); // Active layout 2
-    }
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(2); // Active layout 2
     
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Mesh::ParseVertices(float verticesData[], size_t verticesSize, float uv[], size_t uvSize, float normal[], size_t normalSize)
-{
-    if (verticesCount == 0)
-    {
-        std::cout << "\033[31m" << "ERROR::VerticesCount == 0" << "\033[0m" << std::endl;
-        return;
-    }
-    
-    for (uint32 i = 0; i < verticesCount; ++i)
-    {
-        Vertex v;
-        
-        if (verticesSize > 0)
-            v.position      = glm::vec3(verticesData[i * 3], verticesData[i * 3 + 1], verticesData[i * 3 + 2]);
-        
-        if (uvSize > 0)
-        {
-            v.uv            = glm::vec2(uv[i * 2], uv[i * 2 + 1]);
-            hasUV = true;
-        }
-        
-        if (normalSize > 0)
-        {
-            v.normal        = glm::vec3(normal[i * 3], normal[i * 3 + 1], normal[i * 3 + 2]);
-            hasNormals = true;
-        }
-        
-        Vertices.push_back(v);
-    }
-}
-
-void Mesh::ImportMesh(uint32 indices[], size_t indicesSize)
+void Mesh::ImportMesh()
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &EBO);
@@ -122,16 +82,16 @@ void Mesh::ImportMesh(uint32 indices[], size_t indicesSize)
         std::cerr << "Erreur : VAO, VBO ou EBO non générés" << std::endl;
     }
     
-    std::cout << "verticesCount = " << verticesCount << std::endl;
-    std::cout << "Vertices.size() = " << Vertices.size() << std::endl;
+    std::cout << "verticesCount = " << GetTotalDrawingVertices() << std::endl;
+    std::cout << "Vertices.size() = " << MyMeshData.Vertices.size() << std::endl;
     
     glBindVertexArray(VAO);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, MyMeshData.Indices.size() * sizeof(uint32), MyMeshData.Indices.data(), GL_STATIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER,  sizeof(Vertex) * Vertices.size(),  Vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,  sizeof(Vertex) * MyMeshData.Vertices.size(),  MyMeshData.Vertices.data(), GL_STATIC_DRAW);
     
     ConfigureVAO(VAO);
 }

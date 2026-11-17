@@ -89,9 +89,9 @@ void CustroEngine::SetCurrentScene(Scene* Scene)
 }
 
 //TODO: Supprimer cette fonction quand on aura fait le parser
-Mesh* CustroEngine::ImportMesh(float vertices[], size_t verticesSize, float uv[], size_t uvSize, float normals[], size_t normalsSize, uint32 indices[], size_t indicesSize, const String MeshName)
+Mesh* CustroEngine::ImportMesh(MeshData& NewMeshData,const String AssetPath, const String MeshName)
 {
-    GarbagedMeshes.push_back(new Mesh(vertices, verticesSize, uv, uvSize, normals, normalsSize, indices, indicesSize, MeshName));
+    GarbagedMeshes.push_back(new Mesh(NewMeshData, MeshName));
     return GarbagedMeshes.back();
 }
 
